@@ -257,10 +257,10 @@
       </div>
     </div>
 
-    <!-- พื้นที่ผิวน้ำและกระทงลอยแบบเรียลไทม์ -->
+    <!-- พื้นที่ผิวน้ำและกระทงลอย -->
     <div id="river-section" class="pn-river-surface pt-4 pb-6">
       <!-- แถบกรองกลุ่มผู้ลอยกระทง (เลื่อนแนวนอนได้บนมือถือ) -->
-      <div class="relative z-30 max-w-6xl mx-auto px-3 sm:px-6 mb-2">
+      <div class="relative z-30 max-w-6xl mx-auto px-3 sm:px-6 mb-2 flex items-center justify-between gap-2">
         <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
           <span class="text-xs text-sky-200/80 shrink-0 mr-1 hidden sm:inline">แสดงกระทง:</span>
           <button type="button" onclick="setRiverFilter('ทั้งหมด')" class="river-chip shrink-0 px-3 py-1.5 sm:py-1 rounded-full bg-pn-gold text-pn-navy text-xs font-semibold transition">ทุกกลุ่ม</button>
@@ -269,6 +269,12 @@
           <button type="button" onclick="setRiverFilter('ครูและบุคลากร')" class="river-chip shrink-0 px-3 py-1.5 sm:py-1 rounded-full bg-pn-navy/75 border border-white/15 text-sky-100 text-xs hover:bg-white/15 transition">คุณครูและบุคลากร</button>
           <button type="button" onclick="setRiverFilter('ศิษย์เก่า/ผู้ปกครอง')" class="river-chip shrink-0 px-3 py-1.5 sm:py-1 rounded-full bg-pn-navy/75 border border-white/15 text-sky-100 text-xs hover:bg-white/15 transition">ศิษย์เก่า/ผู้ปกครอง</button>
         </div>
+
+        <!-- ปุ่มอัปเดตกระทงล่าสุด (ช่วยประหยัดโควตา Firestore Read) -->
+        <button type="button" id="refreshRiverBtn" onclick="manualRefreshCloud()" class="shrink-0 px-3 py-1.5 sm:py-1 rounded-full bg-white/10 hover:bg-white/20 border border-pn-gold/30 text-pn-goldBright text-xs font-medium flex items-center gap-1 transition" title="ดึงกระทงล่าสุดจากระบบ">
+          <span>🔄</span>
+          <span class="hidden sm:inline">อัปเดตล่าสุด</span>
+        </button>
       </div>
 
       <!-- สายน้ำที่กระทงกำลังลอย -->
@@ -540,7 +546,7 @@
       <!-- ปุ่มปล่อยกระทงด้านล่าง -->
       <div class="px-5 py-4 border-t border-white/10 bg-pn-navy/80 flex items-center justify-end gap-3 shrink-0 safe-bottom">
         <button type="button" onclick="closeModal('builderModal')" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-sky-100 text-sm transition">ยกเลิก</button>
-        <button type="button" onclick="launchUserKrathong()" class="btn-pn-gold px-6 py-2.5 rounded-xl font-bold text-sm transition">
+        <button type="button" id="launchBtn" onclick="launchUserKrathong()" class="btn-pn-gold px-6 py-2.5 rounded-xl font-bold text-sm transition">
           🪷 ปล่อยกระทงลงสู่สายน้ำ
         </button>
       </div>
@@ -569,8 +575,8 @@
     <div class="bg-[#0a1838] border border-pn-gold/35 rounded-3xl w-full max-w-4xl max-h-[90dvh] flex flex-col overflow-hidden shadow-2xl">
       <div class="px-5 py-4 border-b border-white/10 flex items-center justify-between shrink-0">
         <div>
-          <h3 class="font-serif text-lg sm:text-xl font-bold text-pn-goldBright">ทำเนียบคำอธิษฐาน ชาวผดุงนารี</h3>
-          <p class="text-xs text-sky-200/75">แตะการ์ดเพื่ออ่านคำอธิษฐานและกดร่วมอนุโมทนาสาธุ</p>
+          <h3 class="font-serif text-lg sm:text-xl font-bold text-pn-goldBright">ทำเนียบคำอธิษฐานล่าสุด ชาวผดุงนารี</h3>
+          <p class="text-xs text-sky-200/75">แสดงคำอธิษฐานล่าสุด แตะการ์ดเพื่ออ่านและกดร่วมอนุโมทนาสาธุ</p>
         </div>
         <button type="button" onclick="closeModal('allWishesModal')" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition" aria-label="ปิด">✕</button>
       </div>
@@ -605,11 +611,24 @@
   <!-- ================= แถบแจ้งเตือน (Toast) ================= -->
   <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] px-5 py-3 rounded-2xl bg-pn-navy/95 border border-pn-gold/50 text-pn-goldBright text-xs sm:text-sm font-medium shadow-2xl opacity-0 translate-y-4 pointer-events-none transition-all duration-300 text-center max-w-[90vw]"></div>
 
-  <!-- ================= JavaScript หลักของระบบ (เชื่อมต่อ Firebase Firestore) ================= -->
+  <!-- ================= JavaScript หลักของระบบ (โหมดประหยัดโควตา Firestore) ================= -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, doc, addDoc, updateDoc, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import {
+      getFirestore,
+      collection,
+      doc,
+      addDoc,
+      getDoc,
+      getDocs,
+      setDoc,
+      updateDoc,
+      query,
+      orderBy,
+      limit,
+      increment
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // ---------- 1. ตั้งค่าการเชื่อมต่อ Firebase / Firestore ----------
     // เมื่อนำไปอัปโหลดขึ้น GitHub Pages ให้แทนที่ค่าด้านล่างด้วย firebaseConfig จากโปรเจกต์ของคุณใน Firebase Console
@@ -621,6 +640,9 @@
       messagingSenderId: "YOUR_SENDER_ID",
       appId: "YOUR_APP_ID"
     };
+
+    // จำนวนกระทงล่าสุดที่จะดึงมาแสดงต่อ 1 การเปิดเว็บ (ตั้งไว้ 20 เพื่อประหยัดโควตา Firestore Free Tier)
+    const MAX_CLOUD_FETCH = 20;
 
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'pn-loykrathong-2569';
     let firebaseConfig = GITHUB_FIREBASE_CONFIG;
@@ -636,8 +658,10 @@
     let auth = null;
     let currentUser = null;
     let isCloudConnected = false;
+    let lastRefreshTime = 0;
 
     const BASE_COUNT = 1261;
+    let cloudTotalCount = 0;
 
     const DEFAULT_WISHES = [
       {
@@ -830,9 +854,78 @@
       }
     }
 
-    // ---------- 3. เชื่อมต่อ Firebase Auth & Firestore (Real-time) ----------
+    // ---------- 3. เชื่อมต่อ Firebase Auth & Firestore (โหมดประหยัดโควตา: getDocs + limit 20 + ตัวนับแยก) ----------
     function getWishesCollectionRef() {
       return collection(db, 'artifacts', appId, 'public', 'data', 'krathong_wishes');
+    }
+
+    function getStatsDocRef() {
+      return doc(db, 'artifacts', appId, 'public', 'data', 'krathong_stats', 'summary');
+    }
+
+    async function fetchLatestFromFirestore(showFeedback = false) {
+      if (!db || !currentUser) return;
+      try {
+        // อ่านกระทงล่าสุดไม่เกิน 20 ใบ + เอกสารตัวนับยอดรวม 1 ใบ (รวมไม่เกิน 21 Reads ต่อครั้ง)
+        const latestQuery = query(
+          getWishesCollectionRef(),
+          orderBy('createdAt', 'desc'),
+          limit(MAX_CLOUD_FETCH)
+        );
+
+        const [wishesSnap, statsSnap] = await Promise.all([
+          getDocs(latestQuery),
+          getDoc(getStatsDocRef()).catch(() => null)
+        ]);
+
+        const loaded = [];
+        wishesSnap.forEach((docSnap) => {
+          const data = docSnap.data();
+          loaded.push({
+            id: docSnap.id,
+            name: data.name || 'ผู้ไม่ประสงค์ออกนาม',
+            classRoom: data.classRoom || '',
+            group: data.group || 'นักเรียน ม.ต้น',
+            style: data.style || 'lotusBlue',
+            color: data.color || '#38bdf8',
+            wish: data.wish || '',
+            blesses: typeof data.blesses === 'number' ? data.blesses : 1,
+            createdAt: typeof data.createdAt === 'number' ? data.createdAt : 0,
+            fromCloud: true
+          });
+        });
+
+        cloudWishes = loaded;
+        if (statsSnap && statsSnap.exists()) {
+          const statTotal = Number(statsSnap.data().totalCount || 0);
+          cloudTotalCount = Math.max(statTotal, cloudWishes.length);
+        } else {
+          cloudTotalCount = cloudWishes.length;
+        }
+
+        allWishes = [...cloudWishes, ...DEFAULT_WISHES];
+        isCloudConnected = true;
+        lastRefreshTime = Date.now();
+
+        setCloudBadge(true, 'เชื่อมต่อฐานข้อมูลออนไลน์แล้ว');
+        updateCounter();
+        renderRiverKrathongs();
+
+        const allModal = document.getElementById('allWishesModal');
+        if (allModal && !allModal.classList.contains('hidden')) {
+          renderWishesGrid();
+        }
+
+        if (showFeedback) {
+          showToast('อัปเดตกระทงล่าสุดเรียบร้อยแล้ว');
+        }
+      } catch (err) {
+        console.error('Firestore fetch error:', err);
+        setCloudBadge(false, 'ไม่สามารถโหลดข้อมูลล่าสุดได้');
+        if (showFeedback) {
+          showToast('ไม่สามารถอัปเดตข้อมูลได้ในขณะนี้');
+        }
+      }
     }
 
     async function initFirestoreConnection() {
@@ -854,65 +947,35 @@
           currentUser = cred.user;
         }
 
-        if (!currentUser) return;
-
-        const wishesCol = getWishesCollectionRef();
-        onSnapshot(
-          wishesCol,
-          (snapshot) => {
-            const loaded = [];
-            snapshot.forEach((docSnap) => {
-              const data = docSnap.data();
-              loaded.push({
-                id: docSnap.id,
-                name: data.name || 'ผู้ไม่ประสงค์ออกนาม',
-                classRoom: data.classRoom || '',
-                group: data.group || 'นักเรียน ม.ต้น',
-                style: data.style || 'lotusBlue',
-                color: data.color || '#38bdf8',
-                wish: data.wish || '',
-                blesses: typeof data.blesses === 'number' ? data.blesses : 1,
-                createdAt: typeof data.createdAt === 'number' ? data.createdAt : 0,
-                fromCloud: true
-              });
-            });
-
-            loaded.sort((a, b) => b.createdAt - a.createdAt);
-            cloudWishes = loaded;
-            allWishes = [...cloudWishes, ...DEFAULT_WISHES];
-
-            isCloudConnected = true;
-            setCloudBadge(true, 'เชื่อมต่อฐานข้อมูลออนไลน์แล้ว');
-            updateCounter();
-            renderRiverKrathongs();
-
-            const allModal = document.getElementById('allWishesModal');
-            if (allModal && !allModal.classList.contains('hidden')) {
-              renderWishesGrid();
-            }
-            if (currentDetailId) {
-              const current = allWishes.find(w => w.id === currentDetailId);
-              const blessEl = document.getElementById('detailBlessCount');
-              if (current && blessEl) {
-                blessEl.textContent = toThaiDigits(current.blesses);
-              }
-            }
-          },
-          (error) => {
-            console.error('Firestore onSnapshot error:', error);
-            setCloudBadge(false, 'เชื่อมต่อฐานข้อมูลไม่สำเร็จ');
-          }
-        );
+        if (currentUser) {
+          await fetchLatestFromFirestore(false);
+        }
       } catch (err) {
         console.error('Firebase init error:', err);
         setCloudBadge(false, 'โหมดออฟไลน์ชั่วคราว');
       }
     }
 
+    async function manualRefreshCloud() {
+      if (!isCloudConnected) {
+        showToast('กำลังทำงานในโหมดตัวอย่าง');
+        return;
+      }
+      // หน่วงเวลา 8 วินาทีต่อการกดรีเฟรช เพื่อป้องกันการกดรัวๆ จนเปลืองโควตา Read
+      const elapsed = Date.now() - lastRefreshTime;
+      if (elapsed < 8000) {
+        const waitSec = Math.ceil((8000 - elapsed) / 1000);
+        showToast(`เพิ่งอัปเดตไปเมื่อครู่ กรุณารออีก ${toThaiDigits(waitSec)} วินาที`);
+        return;
+      }
+      await fetchLatestFromFirestore(true);
+    }
+
     function updateCounter() {
       const el = document.getElementById('totalCounter');
       if (el) {
-        el.textContent = toThaiDigits(BASE_COUNT + allWishes.length);
+        const total = BASE_COUNT + DEFAULT_WISHES.length + cloudTotalCount;
+        el.textContent = toThaiDigits(total);
       }
     }
 
@@ -1296,6 +1359,7 @@
       const nameEl = document.getElementById('userNameInput');
       const classEl = document.getElementById('userClassInput');
       const wishEl = document.getElementById('userWishInput');
+      const launchBtn = document.getElementById('launchBtn');
 
       const nameVal = nameEl ? nameEl.value.trim() : '';
       const classVal = classEl ? classEl.value.trim() : '';
@@ -1312,6 +1376,8 @@
         return;
       }
 
+      if (launchBtn) launchBtn.disabled = true;
+
       const wishPayload = {
         name: nameVal,
         classRoom: classVal || builderState.group,
@@ -1323,29 +1389,46 @@
         createdAt: Date.now()
       };
 
-      closeModal('builderModal');
-      if (wishEl) wishEl.value = '';
+      let savedWish = null;
 
       if (isCloudConnected && db && currentUser) {
         try {
-          await addDoc(getWishesCollectionRef(), {
+          // บันทึกกระทงใหม่ (1 Write) + เพิ่มตัวนับยอดรวม (1 Write) โดยไม่ต้องอ่านข้อมูลใหม่ทั้งหมด
+          const docRef = await addDoc(getWishesCollectionRef(), {
             ...wishPayload,
             authorUid: currentUser.uid
           });
-          setRiverFilter('ทั้งหมด');
+          setDoc(getStatsDocRef(), { totalCount: increment(1) }, { merge: true }).catch(() => {});
+
+          savedWish = { ...wishPayload, id: docRef.id, fromCloud: true };
+          cloudWishes.unshift(savedWish);
+          if (cloudWishes.length > MAX_CLOUD_FETCH) cloudWishes.pop();
+          cloudTotalCount += 1;
+          allWishes = [...cloudWishes, ...DEFAULT_WISHES];
+
           showToast('บันทึกและปล่อยกระทงลงสู่สายน้ำเรียบร้อยแล้ว!');
         } catch (err) {
           console.error('Error saving wish to Firestore:', err);
+          if (launchBtn) launchBtn.disabled = false;
           showToast('ไม่สามารถบันทึกขึ้นระบบได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง');
           return;
         }
       } else {
-        const localWish = { ...wishPayload, id: 'local-' + Date.now(), fromCloud: false };
-        allWishes.unshift(localWish);
-        updateCounter();
-        setRiverFilter('ทั้งหมด');
-        createFloatingNode(localWish, 18, true);
+        savedWish = { ...wishPayload, id: 'local-' + Date.now(), fromCloud: false };
+        cloudWishes.unshift(savedWish);
+        cloudTotalCount += 1;
+        allWishes = [...cloudWishes, ...DEFAULT_WISHES];
         showToast('ปล่อยกระทงลงสู่สายน้ำแล้ว (โหมดแสดงผลชั่วคราว)');
+      }
+
+      if (launchBtn) launchBtn.disabled = false;
+      closeModal('builderModal');
+      if (wishEl) wishEl.value = '';
+
+      updateCounter();
+      setRiverFilter('ทั้งหมด');
+      if (savedWish) {
+        createFloatingNode(savedWish, 18, true);
       }
 
       if (fwCanvas && fwCanvas.width > 0) {
@@ -1374,22 +1457,20 @@
       const item = allWishes.find(w => w.id === currentDetailId);
       if (!item) return;
 
+      // อัปเดตตัวเลขบนหน้าจอทันทีเพื่อความลื่นไหล
+      item.blesses += 1;
+      const blessEl = document.getElementById('detailBlessCount');
+      if (blessEl) blessEl.textContent = toThaiDigits(item.blesses);
+      playThaiChime();
+      showToast('ส่งคำอนุโมทนาสาธุเรียบร้อยแล้ว 🙏');
+
       if (item.fromCloud && isCloudConnected && db && currentUser) {
         try {
           const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'krathong_wishes', item.id);
           await updateDoc(docRef, { blesses: increment(1) });
-          playThaiChime();
-          showToast('ส่งคำอนุโมทนาสาธุเรียบร้อยแล้ว 🙏');
         } catch (err) {
           console.error('Error updating blesses:', err);
-          showToast('ไม่สามารถส่งคำอนุโมทนาได้ในขณะนี้');
         }
-      } else {
-        item.blesses += 1;
-        const blessEl = document.getElementById('detailBlessCount');
-        if (blessEl) blessEl.textContent = toThaiDigits(item.blesses);
-        playThaiChime();
-        showToast('ส่งคำอนุโมทนาสาธุเรียบร้อยแล้ว 🙏');
       }
     }
 
@@ -1573,6 +1654,7 @@
     window.handleShareAction = handleShareAction;
     window.openBuilderModal = openBuilderModal;
     window.setRiverFilter = setRiverFilter;
+    window.manualRefreshCloud = manualRefreshCloud;
     window.usePoemAsWish = usePoemAsWish;
     window.closeModal = closeModal;
     window.selectStyle = selectStyle;
