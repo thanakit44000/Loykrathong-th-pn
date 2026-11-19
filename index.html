@@ -1,1 +1,1643 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#07122b" />
+  <title>คืนเพ็ญ ๑๐๐ ปี ผดุงนารี | ลอยกระทงออนไลน์ กลุ่มสาระการเรียนรู้ภาษาไทย</title>
+  <meta name="description" content="ร่วมลอยกระทงออนไลน์ สืบสานประเพณีสมมาน้ำคืนเพ็ง เส็งประทีป และวรรณศิลป์ภาษาไทย เนื่องในวาระ ๑๐๐ ปี โรงเรียนผดุงนารี จังหวัดมหาสารคาม" />
 
+  <!-- โหลดฟอนต์ Noto Serif Thai และ Prompt จาก Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- โหลด Tailwind CSS และ Tone.js สำหรับเสียงดนตรีไทยบรรเลง -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            pn: {
+              navy: '#081533',
+              royal: '#122b5c',
+              sky: '#38bdf8',
+              gold: '#e8c266',
+              goldBright: '#fce39d',
+              cream: '#fdf8ec'
+            }
+          },
+          fontFamily: {
+            sans: ['Prompt', 'sans-serif'],
+            serif: ['"Noto Serif Thai"', 'serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* ตั้งค่าพื้นฐานและการรองรับมือถือ / iPad / In-app Browser */
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      background-color: #060f24;
+      color: #f8fafc;
+      font-family: 'Prompt', sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ระยะปลอดภัยสำหรับหน้าจอมือถือรุ่นใหม่ (Safe Area) */
+    .safe-top {
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+    .safe-bottom {
+      padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    }
+
+    /* ฉากหลักพร้อมภาพพื้นหลังที่คุณเลือก */
+    .pn-hero-scene {
+      position: relative;
+      background-color: #07122b;
+      background-image:
+        linear-gradient(180deg, rgba(6, 15, 36, 0.72) 0%, rgba(7, 18, 43, 0.42) 38%, rgba(7, 20, 48, 0.56) 65%, rgba(6, 15, 36, 0.94) 100%),
+        url('https://i.postimg.cc/zDpw6dms/rabe-yb-wara-kar-pra-ch-m-17-ph-y-69-(2).jpg');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+    /* ผิวน้ำด้านล่างของฉากหลักสำหรับให้กระทงลอย */
+    .pn-river-surface {
+      position: relative;
+      background: linear-gradient(180deg, rgba(8, 28, 66, 0.25) 0%, rgba(7, 25, 58, 0.76) 45%, rgba(6, 15, 36, 0.97) 100%);
+      border-top: 1px solid rgba(252, 227, 157, 0.22);
+      overflow: hidden;
+    }
+
+    /* ปุ่มสีทองสไตล์ไทยร่วมสมัย */
+    .btn-pn-gold {
+      background: linear-gradient(135deg, #fce39d 0%, #e8c266 55%, #c99732 100%);
+      color: #081533;
+      box-shadow: 0 8px 24px rgba(232, 194, 102, 0.32);
+    }
+    .btn-pn-gold:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+    .btn-pn-gold:active {
+      transform: translateY(0);
+    }
+
+    /* แอนิเมชันกระทงลอยโคลงเคลงบนผิวน้ำ */
+    @keyframes bobbing {
+      0%, 100% { transform: translateY(0px) rotate(-1.5deg); }
+      50% { transform: translateY(-6px) rotate(1.5deg); }
+    }
+    .krathong-node {
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.25s ease;
+      user-select: none;
+      will-change: left;
+    }
+    .krathong-node:hover {
+      transform: scale(1.1);
+      z-index: 45 !important;
+    }
+    .krathong-bob {
+      animation: bobbing 3.6s ease-in-out infinite;
+    }
+
+    /* แสงเปลวเทียนพริ้วไหว */
+    @keyframes flicker {
+      0%, 100% { transform: scale(1) skewX(0deg); opacity: 0.95; }
+      50% { transform: scale(1.08, 0.94) skewX(3deg); opacity: 1; }
+    }
+    .candle-flame {
+      transform-origin: 60px 30px;
+      animation: flicker 0.9s ease-in-out infinite;
+    }
+
+    /* แสงระลอกน้ำและหิ่งห้อย */
+    @keyframes shimmerMove {
+      0%, 100% { opacity: 0.12; transform: translateX(0); }
+      50% { opacity: 0.45; transform: translateX(18px); }
+    }
+    .water-shimmer {
+      position: absolute;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(252, 227, 157, 0.65), transparent);
+      animation: shimmerMove var(--dur, 4s) ease-in-out var(--delay, 0s) infinite;
+      pointer-events: none;
+    }
+
+    @keyframes fireflyFloat {
+      0%, 100% { transform: translate(0, 0) scale(0.8); opacity: 0.2; }
+      50% { transform: translate(12px, -18px) scale(1.2); opacity: 0.9; }
+    }
+    .firefly {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fef08a 0%, rgba(252, 227, 157, 0) 70%);
+      animation: fireflyFloat var(--dur, 5s) ease-in-out var(--delay, 0s) infinite;
+      pointer-events: none;
+    }
+
+    /* ซ่อน Scrollbar สำหรับแถบตัวกรองบนมือถือ */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* ลายเส้นตกแต่งขอบไทยแบบมินิมอล */
+    .thai-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(232, 194, 102, 0.55), transparent);
+    }
+  </style>
+</head>
+<body id="top" class="antialiased selection:bg-pn-gold selection:text-pn-navy">
+
+  <!-- ================= แถบนำทางด้านบน (Header) ================= -->
+  <header class="sticky top-0 z-40 bg-[#060f24]/85 backdrop-blur-lg border-b border-pn-gold/20 safe-top">
+    <div class="max-w-6xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
+      <!-- ตราสัญลักษณ์ ๑๐๐ ปี ผดุงนารี และชื่อหน่วยงาน -->
+      <a href="#top" class="flex items-center gap-2.5 sm:gap-3 group min-w-0">
+        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/95 border border-pn-gold/70 flex items-center justify-center shrink-0 shadow-md overflow-hidden p-0.5 group-hover:scale-105 transition">
+          <img src="https://100.phadungnaree.ac.th/100PN.png" alt="โลโก้ ๑๐๐ ปี โรงเรียนผดุงนารี" class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <span style="display:none" class="w-full h-full items-center justify-center font-serif font-bold text-pn-navy text-xs sm:text-sm tracking-tight">ผ.น.</span>
+        </div>
+        <div class="min-w-0">
+          <div class="font-serif font-bold text-sm sm:text-base text-pn-goldBright truncate leading-tight">
+            กลุ่มสาระการเรียนรู้ภาษาไทย
+          </div>
+          <div class="text-[11px] sm:text-xs text-sky-200/80 truncate">
+            โรงเรียนผดุงนารี จังหวัดมหาสารคาม
+          </div>
+        </div>
+      </a>
+
+      <!-- เมนูหลัก (แสดงบนแท็บเล็ตและคอมพิวเตอร์) -->
+      <nav class="hidden md:flex items-center gap-5 text-sm text-sky-100/90">
+        <a href="#river-section" class="hover:text-pn-goldBright transition">สายน้ำสมถวิล</a>
+        <a href="#poetry-section" class="hover:text-pn-goldBright transition">ลานกวีวรรณศิลป์</a>
+        <a href="#quiz-section" class="hover:text-pn-goldBright transition">เกร็ดภาษา &amp; ควิซ</a>
+        <button type="button" onclick="openAllWishesModal()" class="hover:text-pn-goldBright transition">
+          ทำเนียบคำอธิษฐาน
+        </button>
+      </nav>
+
+      <!-- ปุ่มเครื่องมือด้านขวา (เสียงดนตรีไทย + แชร์) -->
+      <div class="flex items-center gap-2 shrink-0">
+        <button type="button" onclick="toggleSound()" id="soundToggleBtn" aria-label="เปิดหรือปิดเสียงดนตรีไทย" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-pn-goldBright transition">
+          <!-- ไอคอนปิดเสียง -->
+          <svg id="soundOffIcon" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H3v6h3l5 4V5zM23 9l-6 6M17 9l6 6" />
+          </svg>
+          <!-- ไอคอนเปิดเสียง -->
+          <svg id="soundOnIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H3v6h3l5 4V5zM15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14" />
+          </svg>
+        </button>
+        <button type="button" onclick="handleShareAction()" class="px-3 sm:px-4 h-9 sm:h-10 rounded-xl bg-pn-royal/80 hover:bg-pn-royal border border-pn-gold/40 text-xs sm:text-sm font-medium text-pn-goldBright flex items-center gap-1.5 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+          </svg>
+          <span class="hidden sm:inline">แชร์กิจกรรม</span>
+          <span class="sm:hidden">แชร์</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= ฉากหลัก: ท้องฟ้าคืนเพ็ญ & สายน้ำคลองสมถวิล ================= -->
+  <section class="pn-hero-scene">
+    <!-- พื้นที่ท้องฟ้าและพลุไฟ -->
+    <div id="skyStage" class="relative min-h-[370px] sm:min-h-[430px] flex flex-col items-center justify-center px-4 py-12 sm:py-16 text-center cursor-crosshair overflow-hidden">
+      <!-- แคนวาสสำหรับวาดพลุไฟ -->
+      <canvas id="fireworksCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-10"></canvas>
+
+      <!-- เนื้อหาหลักกึ่งกลางฉาก -->
+      <div class="relative z-20 max-w-3xl mx-auto">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pn-navy/75 backdrop-blur-md border border-pn-gold/45 text-pn-goldBright text-xs sm:text-sm font-medium mb-4 shadow-lg">
+          <span>✨ วาระพิเศษ ๑๐๐ ปี โรงเรียนผดุงนารี (๒๔๖๙ – ๒๕๖๙)</span>
+        </div>
+
+        <h1 class="font-serif text-3xl sm:text-5xl md:text-[54px] font-bold text-white leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.65)]">
+          คืนเพ็ญ <span class="text-pn-goldBright">๑๐๐ ปี ผดุงนารี</span>
+          <span class="block text-xl sm:text-3xl font-semibold text-sky-100 mt-2">
+            สมมาน้ำคืนเพ็ง เส็งประทีป ออนไลน์
+          </span>
+        </h1>
+
+        <p class="mt-4 text-sm sm:text-base text-sky-100/90 max-w-2xl mx-auto leading-relaxed drop-shadow">
+          ร่วมสืบสานประเพณีลอยกระทงรักษ์สิ่งแวดล้อม ร้อยเรียงคำอธิษฐานด้วยวรรณศิลป์ภาษาไทย
+          ขอขมาพระแม่คงคา ณ สายน้ำคลองสมถวิล เมืองตักสิลามหาสารคาม
+        </p>
+
+        <!-- ปุ่มหลัก -->
+        <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+          <button type="button" onclick="openBuilderModal()" class="btn-pn-gold px-7 sm:px-8 py-3.5 rounded-2xl font-bold text-sm sm:text-base flex items-center gap-2 transition">
+            <span>🪷 ประดิษฐ์กระทงของฉัน</span>
+          </button>
+          <button type="button" onclick="openAllWishesModal()" class="px-6 py-3.5 rounded-2xl bg-pn-navy/80 hover:bg-pn-navy border border-pn-gold/40 text-pn-goldBright font-medium text-sm sm:text-base backdrop-blur-md transition">
+            📜 อ่านคำอธิษฐานทั้งหมด
+          </button>
+        </div>
+
+        <p class="mt-4 text-[11px] sm:text-xs text-sky-200/75">
+          💡 เคล็ดลับ: แตะพื้นที่ว่างบนท้องฟ้าเพื่อจุดพลุฉลอง หรือแตะที่กระทงในสายน้ำเพื่ออ่านคำอธิษฐาน
+        </p>
+      </div>
+    </div>
+
+    <!-- พื้นที่ผิวน้ำและกระทงลอยแบบเรียลไทม์ -->
+    <div id="river-section" class="pn-river-surface pt-4 pb-6">
+      <!-- แถบกรองกลุ่มผู้ลอยกระทง (เลื่อนแนวนอนได้บนมือถือ) -->
+      <div class="relative z-30 max-w-6xl mx-auto px-3 sm:px-6 mb-2">
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+          <span class="text-xs text-sky-200/80 shrink-0 mr-1 hidden sm:inline">แสดงกระทง:</span>
+          <button type="button" onclick="setRiverFilter('ทั้งหมด')" class="river-chip shrink-0 px-3 py-1.5 sm:py-1 rounded-full bg-pn-gold text-pn-navy text-xs font-semibold transition">ทุกกลุ่ม</button>
+          <button type="button" onclick="setRiverFilter('นักเรียน ม.ต้น')" class="river-chip shrink-0 px-3 py-1.5 sm:py-1 rounded-full bg-pn-navy/75 border border-white/15 text-sky-100 text-xs hover:bg-white/15 transition">นักเรียน ม.ต้น</button>
+          <button type="button" onclick="setRiverFilter('นักเรียน ม.ปลาย')" class="river-chip shrink-0 px-3 py-1.5 sm:py-1 rounded-full bg-pn-navy/75 border border-white/15 text-sky-100 text-xs hover:bg-white/15 transition">นักเรียน ม.ปลาย</button>
+          <button type="button" onclick="setRiverFilter('ครูและบุคลากร')" class="river-chip shrink-0 px-3 py-1.5 sm:py-1 rounded-full bg-pn-navy/75 border border-white/15 text-sky-100 text-xs hover:bg-white/15 transition">คุณครูและบุคลากร</button>
+          <button type="button" onclick="setRiverFilter('ศิษย์เก่า/ผู้ปกครอง')" class="river-chip shrink-0 px-3 py-1.5 sm:py-1 rounded-full bg-pn-navy/75 border border-white/15 text-sky-100 text-xs hover:bg-white/15 transition">ศิษย์เก่า/ผู้ปกครอง</button>
+        </div>
+      </div>
+
+      <!-- สายน้ำที่กระทงกำลังลอย -->
+      <div class="relative h-[250px] sm:h-[310px] w-full overflow-hidden">
+        <div id="riverEffects" class="absolute inset-0 pointer-events-none z-10"></div>
+        <div id="riverKrathongs" class="relative w-full h-full z-20"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ส่วนเนื้อหาหลักของกลุ่มสาระการเรียนรู้ภาษาไทย ================= -->
+  <main class="relative z-10 bg-[#060f24] px-4 sm:px-6 py-12 sm:py-16 space-y-16">
+
+    <!-- 1. ลานกวีวรรณศิลป์ (กดนำไปใช้เป็นคำอธิษฐานได้ทันที) -->
+    <section id="poetry-section" class="max-w-6xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="text-xs font-semibold tracking-wider uppercase text-pn-gold">วรรณศิลป์คืนเพ็ญ</span>
+        <h2 class="font-serif text-2xl sm:text-3xl font-bold text-white mt-1">
+          ลานกวีศรีผดุงนารี
+        </h2>
+        <p class="text-sm text-sky-200/80 mt-2">
+          คัดสรรบทร้อยกรองไพเราะทั้งกลอนสุภาพ กาพย์ยานี ๑๑ และโคลงสี่สุภาพ สามารถกดนำไปใช้เป็นคำอธิษฐานลอยกระทงได้ทันที
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- บทที่ 1 -->
+        <article class="bg-pn-navy/75 border border-pn-gold/25 rounded-3xl p-6 flex flex-col justify-between hover:border-pn-gold/55 transition shadow-lg">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-3 py-1 rounded-full bg-sky-400/15 text-sky-300 text-xs font-medium">กลอนสุภาพ (กลอนแปด)</span>
+              <span class="text-pn-gold text-sm">🪷</span>
+            </div>
+            <h3 class="font-serif text-lg font-bold text-pn-goldBright mb-3">ร้อยปีผดุงนารี ศรีตักสิลา</h3>
+            <p class="font-serif text-sm sm:text-base text-pn-cream/90 leading-loose border-l-2 border-pn-gold/60 pl-4">
+              เพ็ญเดือนสิบสอง น้ำนองคลองสมถวิล<br/>
+              ร้อยคำกวินท์ ขอขมาพระแม่คงคา<br/>
+              ร้อยปีผดุงนารี ศรีตักสิลา<br/>
+              สืบสานภาษา คู่ฟ้ามหาสารคาม
+            </p>
+          </div>
+          <button type="button" onclick="usePoemAsWish('เพ็ญเดือนสิบสอง น้ำนองคลองสมถวิล ร้อยคำกวินท์ ขอขมาพระแม่คงคา ร้อยปีผดุงนารี ศรีตักสิลา สืบสานภาษา คู่ฟ้ามหาสารคาม')" class="mt-6 w-full py-2.5 rounded-xl bg-white/10 hover:bg-pn-gold hover:text-pn-navy text-pn-goldBright text-xs sm:text-sm font-medium transition">
+            นำบทนี้ไปอธิษฐาน →
+          </button>
+        </article>
+
+        <!-- บทที่ 2 -->
+        <article class="bg-pn-navy/75 border border-pn-gold/25 rounded-3xl p-6 flex flex-col justify-between hover:border-pn-gold/55 transition shadow-lg">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-3 py-1 rounded-full bg-amber-400/15 text-amber-300 text-xs font-medium">กาพย์ยานี ๑๑</span>
+              <span class="text-pn-gold text-sm">🕯️</span>
+            </div>
+            <h3 class="font-serif text-lg font-bold text-pn-goldBright mb-3">ประทีปแห่งปัญญา</h3>
+            <p class="font-serif text-sm sm:text-base text-pn-cream/90 leading-loose border-l-2 border-pn-gold/60 pl-4">
+              เพ็ญเดือนสิบสองใส &nbsp;&nbsp; จุดเทียนชัยบูชาชล<br/>
+              ขอพรแห่งกุศล &nbsp;&nbsp; ดลปัญญาสว่างไสว<br/>
+              ทุกข์โศกลอยลับล่วง &nbsp;&nbsp; ไร้สิ่งห่วงพ้นโพยภัย<br/>
+              เรียนดีมีวินัย &nbsp;&nbsp; สมดั่งใจใฝ่ปองเทอญ
+            </p>
+          </div>
+          <button type="button" onclick="usePoemAsWish('เพ็ญเดือนสิบสองใส จุดเทียนชัยบูชาชล ขอพรแห่งกุศล ดลปัญญาสว่างไสว ทุกข์โศกลอยลับล่วง ไร้สิ่งห่วงพ้นโพยภัย เรียนดีมีวินัย สมดั่งใจใฝ่ปองเทอญ')" class="mt-6 w-full py-2.5 rounded-xl bg-white/10 hover:bg-pn-gold hover:text-pn-navy text-pn-goldBright text-xs sm:text-sm font-medium transition">
+            นำบทนี้ไปอธิษฐาน →
+          </button>
+        </article>
+
+        <!-- บทที่ 3 -->
+        <article class="bg-pn-navy/75 border border-pn-gold/25 rounded-3xl p-6 flex flex-col justify-between hover:border-pn-gold/55 transition shadow-lg">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-3 py-1 rounded-full bg-emerald-400/15 text-emerald-300 text-xs font-medium">โคลงสี่สุภาพ</span>
+              <span class="text-pn-gold text-sm">🌕</span>
+            </div>
+            <h3 class="font-serif text-lg font-bold text-pn-goldBright mb-3">สมมาน้ำคืนเพ็ง</h3>
+            <p class="font-serif text-sm sm:text-base text-pn-cream/90 leading-loose border-l-2 border-pn-gold/60 pl-4">
+              คืนเพ็งแขแจ่มฟ้า &nbsp;&nbsp; เมืองสารคามเอย<br/>
+              เส็งประทีปเรืองอร่าม &nbsp;&nbsp; ค่ำนี้<br/>
+              สมมาน้ำนอบนาม &nbsp;&nbsp; คงคาแม่ นาแม่<br/>
+              สุขสวัสดิ์พิพัฒน์ชี้ &nbsp;&nbsp; แจ่มแจ้งเจริญธรรม
+            </p>
+          </div>
+          <button type="button" onclick="usePoemAsWish('คืนเพ็งแขแจ่มฟ้า เมืองสารคามเอย เส็งประทีปเรืองอร่าม ค่ำนี้ สมมาน้ำนอบนาม คงคาแม่ สุขสวัสดิ์พิพัฒน์ชี้ แจ่มแจ้งเจริญธรรม')" class="mt-6 w-full py-2.5 rounded-xl bg-white/10 hover:bg-pn-gold hover:text-pn-navy text-pn-goldBright text-xs sm:text-sm font-medium transition">
+            นำบทนี้ไปอธิษฐาน →
+          </button>
+        </article>
+      </div>
+    </section>
+
+    <div class="max-w-6xl mx-auto thai-divider"></div>
+
+    <!-- 2. เกร็ดความรู้ภาษาไทยและมินิควิซประลองภูมิ -->
+    <section id="quiz-section" class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- เกร็ดภาษาไทยคู่ประเพณี -->
+      <div class="lg:col-span-5 space-y-4">
+        <div>
+          <span class="text-xs font-semibold tracking-wider uppercase text-pn-gold">คลังความรู้ภาษาไทย</span>
+          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-white mt-1">
+            เกร็ดภาษา คู่คืนเพ็ญ
+          </h2>
+        </div>
+
+        <div class="bg-pn-navy/70 border border-white/10 rounded-2xl p-5 space-y-3">
+          <h3 class="font-serif font-bold text-pn-goldBright text-base">๑. “สมมาน้ำคืนเพ็ง เส็งประทีป” แปลว่าอะไร?</h3>
+          <p class="text-sm text-sky-100/85 leading-relaxed">
+            เป็นสำนวนภาษาถิ่นอีสานอันงดงาม โดย <b class="text-white">สมมา</b> หมายถึง ขอขมา, <b class="text-white">คืนเพ็ง</b> หมายถึง คืนวันเพ็ญขึ้น ๑๕ ค่ำ และ <b class="text-white">เส็งประทีป</b> หมายถึง การประกวดหรือประชันความงดงามของกระทงและโคมไฟ
+          </p>
+        </div>
+
+        <div class="bg-pn-navy/70 border border-white/10 rounded-2xl p-5 space-y-3">
+          <h3 class="font-serif font-bold text-pn-goldBright text-base">๒. คำไวพจน์ของ “น้ำ” และ “พระจันทร์”</h3>
+          <div class="text-sm text-sky-100/85 leading-relaxed space-y-1.5">
+            <p><b class="text-sky-300">น้ำ:</b> คงคา, ชล, ชลธี, วารี, สินธุ, อุทก, สาคร</p>
+            <p><b class="text-amber-300">พระจันทร์:</b> แข, บุหลัน, รัชนีกร, ศศิธร, โสม, นิศากร</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- มินิควิซประลองภูมิภาษาไทย -->
+      <div class="lg:col-span-7 bg-gradient-to-br from-[#0e2249]/90 to-[#081533]/95 border border-pn-gold/30 rounded-3xl p-6 sm:p-8 shadow-xl">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-5">
+          <div>
+            <span class="text-xs text-sky-300 font-medium">กิจกรรมประลองภูมิปัญญา</span>
+            <h3 class="font-serif text-xl sm:text-2xl font-bold text-pn-goldBright">
+              ตอบคำถามภาษาไทยวันลอยกระทง
+            </h3>
+          </div>
+          <span id="quizProgressBadge" class="px-3 py-1 rounded-full bg-pn-gold/15 border border-pn-gold/40 text-pn-goldBright text-xs font-semibold">
+            ข้อที่ ๑ / ๓
+          </span>
+        </div>
+
+        <div id="quizContainer"></div>
+      </div>
+    </section>
+
+    <!-- 3. สรุปจำนวนกระทงออนไลน์ที่ลอยร่วมกัน (ด้านล่างเหนือ Footer) -->
+    <section class="max-w-4xl mx-auto">
+      <div class="bg-gradient-to-r from-[#0e2249]/90 via-[#122b5c]/80 to-[#0e2249]/90 border border-pn-gold/35 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+        <div>
+          <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2.5">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-400/15 border border-emerald-400/30 text-emerald-300 text-xs font-medium">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              ร่วมรักษ์สายน้ำ ลดขยะในแม่น้ำ ๑๐๐%
+            </div>
+            <div id="cloudStatusBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-400/15 border border-sky-300/30 text-sky-200 text-xs font-medium">
+              <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+              กำลังเชื่อมต่อฐานข้อมูล...
+            </div>
+          </div>
+          <div class="text-sm sm:text-base text-sky-200/85">
+            จำนวนกระทงออนไลน์ที่ลอยร่วมกันทั้งหมด
+          </div>
+          <div id="totalCounter" class="font-serif text-4xl sm:text-5xl font-bold text-pn-goldBright mt-1 tracking-wide">
+            ๑,๒๖๙
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <button type="button" onclick="openBuilderModal()" class="btn-pn-gold px-6 py-3 rounded-2xl font-bold text-sm transition">
+            🪷 ร่วมลอยกระทง
+          </button>
+          <button type="button" onclick="openAllWishesModal()" class="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 text-sky-100 text-sm font-medium transition">
+            ดูทำเนียบคำอธิษฐาน
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= ส่วนท้าย (Footer โรงเรียนผดุงนารี) ================= -->
+  <footer class="bg-[#040a18] border-t border-pn-gold/20 py-10 px-4 text-center safe-bottom">
+    <div class="max-w-4xl mx-auto">
+      <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/95 border border-pn-gold/70 shadow-lg overflow-hidden p-1 mb-3">
+        <img src="https://100.phadungnaree.ac.th/100PN.png" alt="โลโก้ ๑๐๐ ปี โรงเรียนผดุงนารี" class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <span style="display:none" class="w-full h-full items-center justify-center font-serif font-bold text-pn-navy text-base">ผ.น.</span>
+      </div>
+      <h4 class="font-serif text-lg font-bold text-pn-goldBright">
+        กลุ่มสาระการเรียนรู้ภาษาไทย โรงเรียนผดุงนารี
+      </h4>
+      <p class="text-xs sm:text-sm text-sky-200/75 mt-1">
+        ตำบลตลาด อำเภอเมืองมหาสารคาม จังหวัดมหาสารคาม • วาระครบรอบ ๑๐๐ ปี ผดุงนารี (พ.ศ. ๒๔๖๙ – ๒๕๖๙)
+      </p>
+      <p class="text-[11px] text-slate-400 mt-4">
+        © ๒๕๖๙ กลุ่มสาระการเรียนรู้ภาษาไทย โรงเรียนผดุงนารี • สืบสานภาษาไทยและวัฒนธรรมอีสานอย่างยั่งยืน
+      </p>
+    </div>
+  </footer>
+
+  <!-- ================= Modal 1: ประดิษฐ์กระทงของฉัน ================= -->
+  <div id="builderModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-3 sm:p-4">
+    <div class="bg-[#0a1838] border border-pn-gold/35 rounded-3xl w-full max-w-2xl max-h-[92dvh] flex flex-col overflow-hidden shadow-2xl">
+      <!-- หัว Modal -->
+      <div class="px-5 py-4 border-b border-white/10 flex items-center justify-between shrink-0">
+        <div>
+          <h3 class="font-serif text-lg sm:text-xl font-bold text-pn-goldBright">ประดิษฐ์กระทงออนไลน์ ผ.น.</h3>
+          <p class="text-xs text-sky-200/75">เลือกแบบกระทง สีดอกไม้ และเขียนคำอธิษฐานของคุณ</p>
+        </div>
+        <button type="button" onclick="closeModal('builderModal')" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition" aria-label="ปิดหน้าต่าง">✕</button>
+      </div>
+
+      <!-- เนื้อหาแบบเลื่อนได้ -->
+      <div class="p-5 overflow-y-auto space-y-5">
+        <!-- พรีวิวกระทง + เลือกสไตล์ -->
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-pn-navy/70 border border-white/10 rounded-2xl p-4">
+          <div class="sm:col-span-5 flex flex-col items-center">
+            <div id="builderPreview" class="w-32 h-28 sm:w-36 sm:h-32"></div>
+            <span id="builderStyleLabel" class="mt-1 text-xs font-medium text-pn-goldBright">กระทงบัวฟ้าผดุงนารี</span>
+          </div>
+          <div class="sm:col-span-7 space-y-3">
+            <div>
+              <label class="block text-xs text-sky-200/80 mb-1.5">เลือกรูปแบบกระทง</label>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" data-style="lotusBlue" onclick="selectStyle('lotusBlue')" class="style-btn px-2.5 py-2 rounded-xl border text-xs font-medium transition bg-pn-gold text-pn-navy border-pn-gold">บัวฟ้าผดุงนารี</button>
+                <button type="button" data-style="bananaIsan" onclick="selectStyle('bananaIsan')" class="style-btn px-2.5 py-2 rounded-xl border text-xs font-medium transition bg-white/5 text-sky-100 border-white/15 hover:bg-white/10">กาบกล้วยอีสาน</button>
+                <button type="button" data-style="gold100" onclick="selectStyle('gold100')" class="style-btn px-2.5 py-2 rounded-xl border text-xs font-medium transition bg-white/5 text-sky-100 border-white/15 hover:bg-white/10">พานทอง ๑๐๐ ปี</button>
+                <button type="button" data-style="classicLeaf" onclick="selectStyle('classicLeaf')" class="style-btn px-2.5 py-2 rounded-xl border text-xs font-medium transition bg-white/5 text-sky-100 border-white/15 hover:bg-white/10">ใบตองดั้งเดิม</button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs text-sky-200/80 mb-1.5">เลือกสีดอกไม้ประดับ</label>
+              <div class="flex items-center gap-2.5">
+                <button type="button" onclick="selectColor('#38bdf8')" class="color-btn w-7 h-7 rounded-full bg-[#38bdf8] ring-2 ring-offset-2 ring-offset-[#0a1838] ring-pn-gold transition" aria-label="สีฟ้า"></button>
+                <button type="button" onclick="selectColor('#f472b6')" class="color-btn w-7 h-7 rounded-full bg-[#f472b6] ring-2 ring-offset-2 ring-offset-[#0a1838] ring-transparent transition" aria-label="สีชมพู"></button>
+                <button type="button" onclick="selectColor('#facc15')" class="color-btn w-7 h-7 rounded-full bg-[#facc15] ring-2 ring-offset-2 ring-offset-[#0a1838] ring-transparent transition" aria-label="สีเหลืองทอง"></button>
+                <button type="button" onclick="selectColor('#c084fc')" class="color-btn w-7 h-7 rounded-full bg-[#c084fc] ring-2 ring-offset-2 ring-offset-[#0a1838] ring-transparent transition" aria-label="สีม่วง"></button>
+                <button type="button" onclick="selectColor('#fb923c')" class="color-btn w-7 h-7 rounded-full bg-[#fb923c] ring-2 ring-offset-2 ring-offset-[#0a1838] ring-transparent transition" aria-label="สีส้ม"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- สังกัด -->
+        <div>
+          <label class="block text-xs text-sky-200/80 mb-1.5">สังกัด / กลุ่มผู้ร่วมกิจกรรม</label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button type="button" data-group="นักเรียน ม.ต้น" onclick="selectGroup('นักเรียน ม.ต้น')" class="group-btn px-3 py-2 rounded-xl border text-xs font-medium transition bg-pn-gold text-pn-navy border-pn-gold">นักเรียน ม.ต้น</button>
+            <button type="button" data-group="นักเรียน ม.ปลาย" onclick="selectGroup('นักเรียน ม.ปลาย')" class="group-btn px-3 py-2 rounded-xl border text-xs font-medium transition bg-white/5 text-sky-100 border-white/15 hover:bg-white/10">นักเรียน ม.ปลาย</button>
+            <button type="button" data-group="ครูและบุคลากร" onclick="selectGroup('ครูและบุคลากร')" class="group-btn px-3 py-2 rounded-xl border text-xs font-medium transition bg-white/5 text-sky-100 border-white/15 hover:bg-white/10">ครูและบุคลากร</button>
+            <button type="button" data-group="ศิษย์เก่า/ผู้ปกครอง" onclick="selectGroup('ศิษย์เก่า/ผู้ปกครอง')" class="group-btn px-3 py-2 rounded-xl border text-xs font-medium transition bg-white/5 text-sky-100 border-white/15 hover:bg-white/10">ศิษย์เก่า/ผู้ปกครอง</button>
+          </div>
+        </div>
+
+        <!-- ชื่อและห้องเรียน (ใช้ text-base บนมือถือเพื่อป้องกัน iOS auto-zoom) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="userNameInput" class="block text-xs text-sky-200/80 mb-1">ชื่อ-สกุล หรือ ชื่อเล่น *</label>
+            <input id="userNameInput" type="text" maxlength="40" placeholder="เช่น น.ส.พิชญาภา หรือ พี่ฟ้า" class="w-full px-3.5 py-2.5 rounded-xl bg-pn-navy border border-white/15 text-base sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:border-pn-gold" />
+          </div>
+          <div>
+            <label for="userClassInput" class="block text-xs text-sky-200/80 mb-1">ห้องเรียน / กลุ่มสาระฯ / รุ่น (ไม่บังคับ)</label>
+            <input id="userClassInput" type="text" maxlength="30" placeholder="เช่น ม.๕/๑ หรือ ศิษย์เก่ารุ่น ๙๕" class="w-full px-3.5 py-2.5 rounded-xl bg-pn-navy border border-white/15 text-base sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:border-pn-gold" />
+          </div>
+        </div>
+
+        <!-- คำอธิษฐาน -->
+        <div>
+          <label for="userWishInput" class="block text-xs text-sky-200/80 mb-1">คำอธิษฐานขอขมาพระแม่คงคา *</label>
+          <textarea id="userWishInput" rows="3" maxlength="220" placeholder="เขียนคำอธิษฐาน หรือแต่งกลอนสั้นๆ เพื่อเป็นสิริมงคล..." class="w-full px-3.5 py-2.5 rounded-xl bg-pn-navy border border-white/15 text-base sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:border-pn-gold resize-none"></textarea>
+
+          <!-- ปุ่มลัดคำอธิษฐาน -->
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <button type="button" onclick="fillQuickWish('ขอขมาพระแม่คงคา ขอให้สิ่งไม่ดีลอยไปกับสายน้ำ ขอให้การเรียนราบรื่น สอบติดคณะที่หวัง และสุขภาพแข็งแรง')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-[11px] text-sky-200 transition">+ ขอพรการเรียน</button>
+            <button type="button" onclick="fillQuickWish('สมมาน้ำคืนเพ็ง ขอให้ครอบครัวและชาวผดุงนารีทุกคนมีแต่ความสุข ความเจริญ ปราศจากโรคภัยไข้เจ็บ')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-[11px] text-sky-200 transition">+ ขอพรครอบครัว</button>
+            <button type="button" onclick="fillQuickWish('ร่วมฉลอง ๑๐๐ ปี ผดุงนารี ขอให้โรงเรียนเจริญรุ่งเรืองและผลิตเยาวชนคนเก่งคนดีคู่สังคมไทยสืบไป')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-[11px] text-sky-200 transition">+ อวยพร ๑๐๐ ปี ผ.น.</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ปุ่มปล่อยกระทงด้านล่าง -->
+      <div class="px-5 py-4 border-t border-white/10 bg-pn-navy/80 flex items-center justify-end gap-3 shrink-0 safe-bottom">
+        <button type="button" onclick="closeModal('builderModal')" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-sky-100 text-sm transition">ยกเลิก</button>
+        <button type="button" onclick="launchUserKrathong()" class="btn-pn-gold px-6 py-2.5 rounded-xl font-bold text-sm transition">
+          🪷 ปล่อยกระทงลงสู่สายน้ำ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= Modal 2: อ่านคำอธิษฐานรายบุคคล ================= -->
+  <div id="wishDetailModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+    <div class="bg-[#0a1838] border border-pn-gold/40 rounded-3xl w-full max-w-md p-6 text-center relative shadow-2xl">
+      <button type="button" onclick="closeModal('wishDetailModal')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-sm transition" aria-label="ปิด">✕</button>
+      <div id="detailSvg" class="w-28 h-24 mx-auto mb-2"></div>
+      <div id="detailBadge" class="inline-block px-3 py-1 rounded-full bg-sky-400/15 border border-sky-300/30 text-sky-200 text-xs mb-2"></div>
+      <h3 id="detailName" class="font-serif text-xl font-bold text-pn-goldBright"></h3>
+      <p id="detailWish" class="font-serif text-sm sm:text-base text-pn-cream/95 leading-relaxed mt-3 bg-pn-navy/70 border border-white/10 rounded-2xl p-4"></p>
+      <div class="mt-5 flex items-center justify-center gap-3">
+        <button type="button" onclick="blessCurrentWish()" class="btn-pn-gold px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 transition">
+          <span>🙏 ร่วมอนุโมทนาสาธุ</span>
+          <span id="detailBlessCount" class="px-2 py-0.5 rounded-full bg-pn-navy/20 text-xs">๑</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= Modal 3: ทำเนียบคำอธิษฐานทั้งหมด ================= -->
+  <div id="allWishesModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-3 sm:p-4">
+    <div class="bg-[#0a1838] border border-pn-gold/35 rounded-3xl w-full max-w-4xl max-h-[90dvh] flex flex-col overflow-hidden shadow-2xl">
+      <div class="px-5 py-4 border-b border-white/10 flex items-center justify-between shrink-0">
+        <div>
+          <h3 class="font-serif text-lg sm:text-xl font-bold text-pn-goldBright">ทำเนียบคำอธิษฐาน ชาวผดุงนารี</h3>
+          <p class="text-xs text-sky-200/75">แตะการ์ดเพื่ออ่านคำอธิษฐานและกดร่วมอนุโมทนาสาธุ</p>
+        </div>
+        <button type="button" onclick="closeModal('allWishesModal')" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition" aria-label="ปิด">✕</button>
+      </div>
+
+      <!-- ตัวกรองใน Modal -->
+      <div class="px-5 py-3 border-b border-white/10 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0 text-xs">
+        <button type="button" onclick="filterModalWishes('ทั้งหมด')" class="modal-chip shrink-0 px-3 py-1.5 rounded-full bg-pn-gold text-pn-navy font-semibold">ทั้งหมด</button>
+        <button type="button" onclick="filterModalWishes('นักเรียน ม.ต้น')" class="modal-chip shrink-0 px-3 py-1.5 rounded-full bg-white/10 text-sky-100 hover:bg-white/20">นักเรียน ม.ต้น</button>
+        <button type="button" onclick="filterModalWishes('นักเรียน ม.ปลาย')" class="modal-chip shrink-0 px-3 py-1.5 rounded-full bg-white/10 text-sky-100 hover:bg-white/20">นักเรียน ม.ปลาย</button>
+        <button type="button" onclick="filterModalWishes('ครูและบุคลากร')" class="modal-chip shrink-0 px-3 py-1.5 rounded-full bg-white/10 text-sky-100 hover:bg-white/20">ครูและบุคลากร</button>
+        <button type="button" onclick="filterModalWishes('ศิษย์เก่า/ผู้ปกครอง')" class="modal-chip shrink-0 px-3 py-1.5 rounded-full bg-white/10 text-sky-100 hover:bg-white/20">ศิษย์เก่า/ผู้ปกครอง</button>
+      </div>
+
+      <div id="wishesGrid" class="p-5 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5"></div>
+    </div>
+  </div>
+
+  <!-- ================= Modal 4: แชร์ลิงก์กิจกรรม ================= -->
+  <div id="shareModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+    <div class="bg-[#0a1838] border border-pn-gold/40 rounded-3xl w-full max-w-md p-6 text-center relative shadow-2xl">
+      <button type="button" onclick="closeModal('shareModal')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-sm transition" aria-label="ปิด">✕</button>
+      <div class="text-3xl mb-2">🪷</div>
+      <h3 class="font-serif text-xl font-bold text-pn-goldBright">ชวนเพื่อนมาร่วมลอยกระทง</h3>
+      <p class="text-xs sm:text-sm text-sky-200/80 mt-1">คัดลอกลิงก์ด้านล่างเพื่อส่งต่อในกลุ่มห้องเรียนหรือโซเชียลมีเดีย</p>
+      <div class="mt-4 flex items-center gap-2">
+        <input id="shareUrlInput" type="text" readonly class="w-full px-3 py-2.5 rounded-xl bg-pn-navy border border-white/15 text-xs text-sky-100 focus:outline-none" />
+        <button type="button" onclick="copyShareLink()" class="btn-pn-gold px-4 py-2.5 rounded-xl font-bold text-xs shrink-0 transition">คัดลอก</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= แถบแจ้งเตือน (Toast) ================= -->
+  <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] px-5 py-3 rounded-2xl bg-pn-navy/95 border border-pn-gold/50 text-pn-goldBright text-xs sm:text-sm font-medium shadow-2xl opacity-0 translate-y-4 pointer-events-none transition-all duration-300 text-center max-w-[90vw]"></div>
+
+  <!-- ================= JavaScript หลักของระบบ (เชื่อมต่อ Firebase Firestore) ================= -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, addDoc, updateDoc, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // ---------- 1. ตั้งค่าการเชื่อมต่อ Firebase / Firestore ----------
+    // เมื่อนำไปอัปโหลดขึ้น GitHub Pages ให้แทนที่ค่าด้านล่างด้วย firebaseConfig จากโปรเจกต์ของคุณใน Firebase Console
+    const GITHUB_FIREBASE_CONFIG = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'pn-loykrathong-2569';
+    let firebaseConfig = GITHUB_FIREBASE_CONFIG;
+    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+      try {
+        firebaseConfig = JSON.parse(__firebase_config);
+      } catch (e) {
+        console.error('ไม่สามารถอ่านค่าคอนฟิกของระบบได้:', e);
+      }
+    }
+
+    let db = null;
+    let auth = null;
+    let currentUser = null;
+    let isCloudConnected = false;
+
+    const BASE_COUNT = 1261;
+
+    const DEFAULT_WISHES = [
+      {
+        id: 'pn-1',
+        name: 'ครูสุพัตรา',
+        classRoom: 'กลุ่มสาระฯ ภาษาไทย',
+        group: 'ครูและบุคลากร',
+        style: 'gold100',
+        color: '#38bdf8',
+        wish: 'ขออำนาจคุณพระศรีรัตนตรัยคุ้มครองลูกศิษย์ผดุงนารีทุกคน ให้มีปัญญาเฉียบแหลม ภาษาไทยงดงาม และประสบความสำเร็จในชีวิต',
+        blesses: 42,
+        createdAt: 1700000008,
+        fromCloud: false
+      },
+      {
+        id: 'pn-2',
+        name: 'น.ส.พิชญาภา',
+        classRoom: 'ม.๖/๑',
+        group: 'นักเรียน ม.ปลาย',
+        style: 'lotusBlue',
+        color: '#38bdf8',
+        wish: 'ขอขมาพระแม่คงคา ขอให้การสอบ TCAS ปีนี้ราบรื่น สมหวังในคณะที่ตั้งใจไว้ และขอให้ชาว ม.๖ ผดุงนารีติดมหาลัยทุกคน!',
+        blesses: 38,
+        createdAt: 1700000007,
+        fromCloud: false
+      },
+      {
+        id: 'pn-3',
+        name: 'ด.ญ.กัญญารัตน์',
+        classRoom: 'ม.๒/๔',
+        group: 'นักเรียน ม.ต้น',
+        style: 'bananaIsan',
+        color: '#f472b6',
+        wish: 'สมมาน้ำคืนเพ็ง ขอให้สิ่งไม่ดีลอยไปกับสายน้ำคลองสมถวิล ขอให้ครอบครัวแข็งแรงและเกรด ๔.๐๐ ทุกวิชาค่ะ',
+        blesses: 27,
+        createdAt: 1700000006,
+        fromCloud: false
+      },
+      {
+        id: 'pn-4',
+        name: 'พี่ศิรินภา (รุ่น ๙๒)',
+        classRoom: 'ศิษย์เก่า ผ.น.',
+        group: 'ศิษย์เก่า/ผู้ปกครอง',
+        style: 'gold100',
+        color: '#facc15',
+        wish: 'ร่วมเฉลิมฉลอง ๑๐๐ ปี ผดุงนารี คิดถึงรั้วกรมท่า-ฟ้าและคุณครูภาษาไทยเสมอ ขอให้โรงเรียนเจริญรุ่งเรืองสืบไป',
+        blesses: 51,
+        createdAt: 1700000005,
+        fromCloud: false
+      },
+      {
+        id: 'pn-5',
+        name: 'น.ส.ณัฐธิดา',
+        classRoom: 'ม.๔/๓',
+        group: 'นักเรียน ม.ปลาย',
+        style: 'classicLeaf',
+        color: '#c084fc',
+        wish: 'เพ็ญเดือนสิบสองใส จุดเทียนชัยบูชาชล ขอพรแห่งกุศล ดลปัญญาสว่างไสว',
+        blesses: 19,
+        createdAt: 1700000004,
+        fromCloud: false
+      },
+      {
+        id: 'pn-6',
+        name: 'ด.ญ.ปณิดา',
+        classRoom: 'ม.๑/๒',
+        group: 'นักเรียน ม.ต้น',
+        style: 'lotusBlue',
+        color: '#fb923c',
+        wish: 'ขอให้มีแต่เรื่องดีๆ เข้ามาในชีวิต เจอเพื่อนดีๆ และมีความสุขกับการเรียนที่โรงเรียนผดุงนารีค่ะ',
+        blesses: 16,
+        createdAt: 1700000003,
+        fromCloud: false
+      },
+      {
+        id: 'pn-7',
+        name: 'ครูกิตติพงษ์',
+        classRoom: 'กลุ่มสาระฯ ภาษาไทย',
+        group: 'ครูและบุคลากร',
+        style: 'bananaIsan',
+        color: '#facc15',
+        wish: 'ร่วมสืบสานประเพณีสมมาน้ำคืนเพ็ง เส็งประทีป ลดขยะในแม่น้ำ รักษาคลองสมถวิลให้ใสสะอาดคู่เมืองมหาสารคาม',
+        blesses: 33,
+        createdAt: 1700000002,
+        fromCloud: false
+      },
+      {
+        id: 'pn-8',
+        name: 'น.ส.ชลธิชา',
+        classRoom: 'ม.๕/๒',
+        group: 'นักเรียน ม.ปลาย',
+        style: 'lotusBlue',
+        color: '#f472b6',
+        wish: 'ขอให้ลอยความเหนื่อยล้าออกไปให้หมด แล้วรับพลังบวกกลับมาเต็มเปี่ยมในเทอมนี้ค่ะ',
+        blesses: 24,
+        createdAt: 1700000001,
+        fromCloud: false
+      }
+    ];
+
+    const STYLE_LABELS = {
+      lotusBlue: 'กระทงบัวฟ้าผดุงนารี',
+      bananaIsan: 'กระทงกาบกล้วยอีสาน',
+      gold100: 'กระทงพานทอง ๑๐๐ ปี ผ.น.',
+      classicLeaf: 'กระทงใบตองดั้งเดิม'
+    };
+
+    const QUIZ_DATA = [
+      {
+        q: 'คำว่า “เส็งประทีป” ในประเพณีสมมาน้ำคืนเพ็ง เส็งประทีป ของภาคอีสาน หมายถึงข้อใด?',
+        options: ['การจุดธูปเทียนบูชาพระจันทร์', 'การประกวดหรือประชันกระทงและโคมไฟ', 'การปล่อยโคมลอยขึ้นสู่ท้องฟ้า', 'การตักน้ำศักดิ์สิทธิ์ในคืนวันเพ็ญ'],
+        answer: 1,
+        explain: 'คำว่า “เส็ง” ในภาษาถิ่นอีสาน แปลว่า แข่งขันหรือประชัน เช่น เส็งกลอง เส็งประทีป จึงหมายถึงการประกวดความงดงามของกระทงและโคมไฟครับ'
+      },
+      {
+        q: 'ข้อใด “ไม่ใช่” คำไวพจน์ของคำว่า “น้ำ” ที่นิยมใช้ในวรรณคดีไทย?',
+        options: ['ชลธี', 'วารี', 'ศศิธร', 'คงคา'],
+        answer: 2,
+        explain: '“ศศิธร” เป็นคำไวพจน์ของ “พระจันทร์” (ผู้ทรงไว้ซึ่งกระต่าย) ส่วน ชลธี วารี และคงคา ล้วนหมายถึง น้ำ ครับ'
+      },
+      {
+        q: 'บทประพันธ์ “เพ็ญเดือนสิบสองใส จุดเทียนชัยบูชาชล” เป็นคำประพันธ์ชนิดใด?',
+        options: ['กลอนสุภาพ', 'กาพย์ยานี ๑๑', 'โคลงสี่สุภาพ', 'ฉันท์'],
+        answer: 1,
+        explain: 'สังเกตจำนวนคำในวรรคหน้ามี ๕ คำ (เพ็ญ-เดือน-สิบ-สอง-ใส) และวรรคหลังมี ๖ คำ (จุด-เทียน-ชัย-บู-ชา-ชล) รวม ๑๑ คำ จึงเป็น “กาพย์ยานี ๑๑” ครับ'
+      }
+    ];
+
+    let cloudWishes = [];
+    let allWishes = [...DEFAULT_WISHES];
+    let riverFilter = 'ทั้งหมด';
+    let modalFilter = 'ทั้งหมด';
+    let activeRiverNodes = [];
+    let currentDetailId = null;
+
+    // สถานะตัวสร้างกระทง
+    let builderState = {
+      style: 'lotusBlue',
+      color: '#38bdf8',
+      group: 'นักเรียน ม.ต้น'
+    };
+
+    // สถานะเสียงดนตรีไทย (Tone.js)
+    let soundEnabled = false;
+    let synth = null;
+    let musicLoop = null;
+
+    // สถานะควิซ
+    let quizIndex = 0;
+    let quizScore = 0;
+    let quizAnswered = false;
+
+    // ---------- 2. ฟังก์ชันช่วยแปลงเลขไทยและป้องกัน XSS ----------
+    function toThaiDigits(num) {
+      const th = ['๐', '๑', '๒', '๓', '๔', '๕', '๖', '๗', '๘', '๙'];
+      return Number(num).toLocaleString('en-US').replace(/\d/g, d => th[d]);
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.remove('opacity-0', 'translate-y-4');
+      t.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        t.classList.add('opacity-0', 'translate-y-4');
+        t.classList.remove('opacity-100', 'translate-y-0');
+      }, 2800);
+    }
+
+    function setCloudBadge(connected, label) {
+      const badge = document.getElementById('cloudStatusBadge');
+      if (!badge) return;
+      if (connected) {
+        badge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-400/15 border border-sky-300/35 text-sky-200 text-xs font-medium';
+        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-sky-400"></span>${escapeHtml(label)}`;
+      } else {
+        badge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-300/35 text-amber-200 text-xs font-medium';
+        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400"></span>${escapeHtml(label)}`;
+      }
+    }
+
+    // ---------- 3. เชื่อมต่อ Firebase Auth & Firestore (Real-time) ----------
+    function getWishesCollectionRef() {
+      return collection(db, 'artifacts', appId, 'public', 'data', 'krathong_wishes');
+    }
+
+    async function initFirestoreConnection() {
+      if (!firebaseConfig || !firebaseConfig.apiKey || firebaseConfig.apiKey === 'YOUR_API_KEY') {
+        setCloudBadge(false, 'โหมดตัวอย่าง (ยังไม่ได้ใส่ค่า Firebase)');
+        return;
+      }
+
+      try {
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          const cred = await signInWithCustomToken(auth, __initial_auth_token);
+          currentUser = cred.user;
+        } else {
+          const cred = await signInAnonymously(auth);
+          currentUser = cred.user;
+        }
+
+        if (!currentUser) return;
+
+        const wishesCol = getWishesCollectionRef();
+        onSnapshot(
+          wishesCol,
+          (snapshot) => {
+            const loaded = [];
+            snapshot.forEach((docSnap) => {
+              const data = docSnap.data();
+              loaded.push({
+                id: docSnap.id,
+                name: data.name || 'ผู้ไม่ประสงค์ออกนาม',
+                classRoom: data.classRoom || '',
+                group: data.group || 'นักเรียน ม.ต้น',
+                style: data.style || 'lotusBlue',
+                color: data.color || '#38bdf8',
+                wish: data.wish || '',
+                blesses: typeof data.blesses === 'number' ? data.blesses : 1,
+                createdAt: typeof data.createdAt === 'number' ? data.createdAt : 0,
+                fromCloud: true
+              });
+            });
+
+            loaded.sort((a, b) => b.createdAt - a.createdAt);
+            cloudWishes = loaded;
+            allWishes = [...cloudWishes, ...DEFAULT_WISHES];
+
+            isCloudConnected = true;
+            setCloudBadge(true, 'เชื่อมต่อฐานข้อมูลออนไลน์แล้ว');
+            updateCounter();
+            renderRiverKrathongs();
+
+            const allModal = document.getElementById('allWishesModal');
+            if (allModal && !allModal.classList.contains('hidden')) {
+              renderWishesGrid();
+            }
+            if (currentDetailId) {
+              const current = allWishes.find(w => w.id === currentDetailId);
+              const blessEl = document.getElementById('detailBlessCount');
+              if (current && blessEl) {
+                blessEl.textContent = toThaiDigits(current.blesses);
+              }
+            }
+          },
+          (error) => {
+            console.error('Firestore onSnapshot error:', error);
+            setCloudBadge(false, 'เชื่อมต่อฐานข้อมูลไม่สำเร็จ');
+          }
+        );
+      } catch (err) {
+        console.error('Firebase init error:', err);
+        setCloudBadge(false, 'โหมดออฟไลน์ชั่วคราว');
+      }
+    }
+
+    function updateCounter() {
+      const el = document.getElementById('totalCounter');
+      if (el) {
+        el.textContent = toThaiDigits(BASE_COUNT + allWishes.length);
+      }
+    }
+
+    // ---------- 4. วาดกระทงด้วย SVG แบบกำหนดเอง 4 สไตล์ ----------
+    function getKrathongSVG(style, flowerColor) {
+      const fc = flowerColor || '#38bdf8';
+      let baseSVG = '';
+
+      if (style === 'gold100') {
+        baseSVG = `
+          <ellipse cx="60" cy="88" rx="44" ry="12" fill="#926318"/>
+          <path d="M20 74 Q60 98 100 74 L94 86 Q60 104 26 86 Z" fill="#e8c266"/>
+          <path d="M18 74 L30 58 L42 74 L52 56 L60 72 L68 56 L78 74 L90 58 L102 74 Q60 92 18 74 Z" fill="#fce39d" stroke="#b58124" stroke-width="1.2"/>
+          <circle cx="60" cy="83" r="5" fill="#122b5c" stroke="#fce39d" stroke-width="1"/>
+        `;
+      } else if (style === 'bananaIsan') {
+        baseSVG = `
+          <ellipse cx="60" cy="88" rx="44" ry="12" fill="#3f6212"/>
+          <path d="M16 74 Q60 96 104 74 L97 86 Q60 103 23 86 Z" fill="#65a30d"/>
+          <path d="M16 74 Q26 56 38 72 Q49 52 60 72 Q71 52 82 72 Q94 56 104 74 Q60 90 16 74 Z" fill="#84cc16" stroke="#3f6212" stroke-width="1.2"/>
+        `;
+      } else if (style === 'classicLeaf') {
+        baseSVG = `
+          <ellipse cx="60" cy="88" rx="43" ry="12" fill="#14532d"/>
+          <path d="M18 74 Q60 96 102 74 L96 86 Q60 102 24 86 Z" fill="#15803d"/>
+          <polygon points="20,74 30,54 40,74" fill="#22c55e" stroke="#14532d" stroke-width="1"/>
+          <polygon points="35,74 47,50 58,74" fill="#16a34a" stroke="#14532d" stroke-width="1"/>
+          <polygon points="62,74 73,50 85,74" fill="#16a34a" stroke="#14532d" stroke-width="1"/>
+          <polygon points="80,74 90,54 100,74" fill="#22c55e" stroke="#14532d" stroke-width="1"/>
+          <polygon points="48,76 60,48 72,76" fill="#4ade80" stroke="#14532d" stroke-width="1"/>
+        `;
+      } else {
+        baseSVG = `
+          <ellipse cx="60" cy="88" rx="44" ry="12" fill="#0c4a6e"/>
+          <path d="M16 75 Q30 48 48 74 Q60 44 72 74 Q90 48 104 75 Q60 96 16 75 Z" fill="#0284c7" stroke="#bae6fd" stroke-width="1"/>
+          <path d="M24 76 Q38 52 52 75 Q60 50 68 75 Q82 52 96 76 Q60 94 24 76 Z" fill="#38bdf8" stroke="#e0f2fe" stroke-width="1"/>
+          <path d="M34 78 Q60 94 86 78 L80 86 Q60 98 40 86 Z" fill="#122b5c"/>
+        `;
+      }
+
+      return `
+        <svg viewBox="0 0 120 110" class="w-full h-full drop-shadow-[0_6px_12px_rgba(0,0,0,0.45)]" aria-hidden="true">
+          <ellipse cx="60" cy="95" rx="42" ry="7" fill="rgba(252,227,157,0.22)"/>
+          <line x1="51" y1="68" x2="45" y2="30" stroke="#a16207" stroke-width="2" stroke-linecap="round"/>
+          <line x1="69" y1="68" x2="75" y2="30" stroke="#a16207" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="45" cy="30" r="1.8" fill="#fb923c"/>
+          <circle cx="75" cy="30" r="1.8" fill="#fb923c"/>
+          <rect x="57" y="34" width="6" height="34" rx="2" fill="#fde047" stroke="#ca8a04" stroke-width="0.8"/>
+          <circle cx="60" cy="24" r="13" fill="rgba(253,224,71,0.22)"/>
+          <path class="candle-flame" d="M60 12 C65 20 66 28 60 33 C54 28 55 20 60 12 Z" fill="#f97316"/>
+          <path class="candle-flame" d="M60 18 C63 23 63 28 60 31 C57 28 57 23 60 18 Z" fill="#fef08a"/>
+          ${baseSVG}
+          <circle cx="36" cy="70" r="6" fill="${fc}" stroke="#fff" stroke-width="1"/>
+          <circle cx="36" cy="70" r="2.2" fill="#fef08a"/>
+          <circle cx="84" cy="70" r="6" fill="${fc}" stroke="#fff" stroke-width="1"/>
+          <circle cx="84" cy="70" r="2.2" fill="#fef08a"/>
+          <circle cx="60" cy="72" r="7" fill="${fc}" stroke="#fff" stroke-width="1.2"/>
+          <circle cx="60" cy="72" r="2.5" fill="#fef08a"/>
+        </svg>
+      `;
+    }
+
+    // ---------- 5. ระบบสายน้ำและกระทงลอย ----------
+    function createRiverEffects() {
+      const container = document.getElementById('riverEffects');
+      if (!container) return;
+      container.innerHTML = '';
+
+      for (let i = 0; i < 16; i++) {
+        const shimmer = document.createElement('div');
+        shimmer.className = 'water-shimmer';
+        shimmer.style.width = `${40 + Math.random() * 90}px`;
+        shimmer.style.left = `${Math.random() * 92}%`;
+        shimmer.style.top = `${15 + Math.random() * 80}%`;
+        shimmer.style.setProperty('--dur', `${3 + Math.random() * 3.5}s`);
+        shimmer.style.setProperty('--delay', `${Math.random() * 3}s`);
+        container.appendChild(shimmer);
+      }
+
+      for (let i = 0; i < 12; i++) {
+        const f = document.createElement('div');
+        f.className = 'firefly';
+        const size = 5 + Math.random() * 7;
+        f.style.width = `${size}px`;
+        f.style.height = `${size}px`;
+        f.style.left = `${Math.random() * 95}%`;
+        f.style.top = `${10 + Math.random() * 75}%`;
+        f.style.setProperty('--dur', `${4 + Math.random() * 4}s`);
+        f.style.setProperty('--delay', `${Math.random() * 4}s`);
+        container.appendChild(f);
+      }
+    }
+
+    function setRiverFilter(group) {
+      riverFilter = group;
+      document.querySelectorAll('.river-chip').forEach(btn => {
+        const isMatch = (group === 'ทั้งหมด' && btn.textContent.includes('ทุกกลุ่ม')) ||
+                        (group === 'นักเรียน ม.ต้น' && btn.textContent.includes('ม.ต้น')) ||
+                        (group === 'นักเรียน ม.ปลาย' && btn.textContent.includes('ม.ปลาย')) ||
+                        (group === 'ครูและบุคลากร' && btn.textContent.includes('คุณครู')) ||
+                        (group === 'ศิษย์เก่า/ผู้ปกครอง' && btn.textContent.includes('ศิษย์เก่า'));
+        btn.className = isMatch
+          ? 'river-chip shrink-0 px-3 py-1.5 sm:py-1 rounded-full bg-pn-gold text-pn-navy text-xs font-semibold transition'
+          : 'river-chip shrink-0 px-3 py-1.5 sm:py-1 rounded-full bg-pn-navy/75 border border-white/15 text-sky-100 text-xs hover:bg-white/15 transition';
+      });
+      renderRiverKrathongs();
+    }
+
+    function renderRiverKrathongs() {
+      const container = document.getElementById('riverKrathongs');
+      if (!container) return;
+      container.innerHTML = '';
+      activeRiverNodes = [];
+
+      const maxNodes = window.innerWidth < 640 ? 7 : 10;
+      const list = riverFilter === 'ทั้งหมด'
+        ? allWishes.slice(0, maxNodes)
+        : allWishes.filter(w => w.group === riverFilter).slice(0, maxNodes);
+
+      if (list.length === 0) {
+        container.innerHTML = `<div class="h-full flex items-center justify-center text-sky-200/75 text-sm px-4 text-center">ยังไม่มีกระทงในกลุ่มนี้ กดปุ่ม “ประดิษฐ์กระทงของฉัน” เพื่อลอยเป็นคนแรกได้เลย!</div>`;
+        return;
+      }
+
+      list.forEach((item, idx) => {
+        createFloatingNode(item, (idx / list.length) * 95);
+      });
+    }
+
+    function createFloatingNode(item, startX = 10, highlight = false) {
+      const container = document.getElementById('riverKrathongs');
+      if (!container) return;
+      const isMobile = window.innerWidth < 640;
+      const lane = Math.floor(Math.random() * 3);
+      const cfg = isMobile
+        ? [
+            { top: 8, size: 64, speed: 0.02, z: 15 },
+            { top: 34, size: 78, speed: 0.028, z: 25 },
+            { top: 58, size: 92, speed: 0.036, z: 35 }
+          ][lane]
+        : [
+            { top: 10, size: 78, speed: 0.017, z: 15 },
+            { top: 35, size: 96, speed: 0.025, z: 25 },
+            { top: 58, size: 112, speed: 0.033, z: 35 }
+          ][lane];
+
+      const el = document.createElement('div');
+      el.className = 'krathong-node flex flex-col items-center';
+      el.style.top = `${cfg.top}%`;
+      el.style.left = `${startX}%`;
+      el.style.zIndex = highlight ? 42 : cfg.z;
+
+      const labelClass = highlight
+        ? 'bg-pn-gold text-pn-navy font-semibold border-white'
+        : 'bg-pn-navy/80 text-sky-100 border-pn-gold/30';
+
+      el.innerHTML = `
+        <div class="krathong-bob flex flex-col items-center">
+          <div style="width:${cfg.size}px;height:${Math.round(cfg.size * 0.9)}px;">
+            ${getKrathongSVG(item.style, item.color)}
+          </div>
+          <span class="mt-0.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] border backdrop-blur-md whitespace-nowrap max-w-[130px] truncate shadow ${labelClass}">
+            ${escapeHtml(item.name)}
+          </span>
+        </div>
+      `;
+
+      el.addEventListener('click', () => openWishDetail(item.id));
+      container.appendChild(el);
+
+      activeRiverNodes.push({
+        el,
+        x: startX,
+        speed: cfg.speed
+      });
+    }
+
+    function animateRiver() {
+      for (const node of activeRiverNodes) {
+        node.x += node.speed;
+        if (node.x > 106) {
+          node.x = -14;
+        }
+        node.el.style.left = `${node.x}%`;
+      }
+      requestAnimationFrame(animateRiver);
+    }
+
+    // ---------- 6. ระบบพลุไฟบนท้องฟ้า (Canvas พร้อม Null Check) ----------
+    let fwCanvas = null;
+    let fwCtx = null;
+    let particles = [];
+
+    function initFireworksCanvas() {
+      fwCanvas = document.getElementById('fireworksCanvas');
+      if (fwCanvas && typeof fwCanvas.getContext === 'function') {
+        fwCtx = fwCanvas.getContext('2d');
+      }
+    }
+
+    function resizeFireworks() {
+      const stage = document.getElementById('skyStage');
+      if (!stage || !fwCanvas) return;
+      fwCanvas.width = stage.clientWidth;
+      fwCanvas.height = stage.clientHeight;
+    }
+
+    function spawnFirework(x, y) {
+      if (!fwCanvas || !fwCtx) return;
+      const colors = ['#fce39d', '#38bdf8', '#f472b6', '#fbbf24', '#a78bfa', '#34d399'];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const count = window.innerWidth < 640 ? 28 : 42;
+
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count + (Math.random() * 0.15);
+        const speed = 1.4 + Math.random() * 3.4;
+        particles.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          alpha: 1,
+          decay: 0.015 + Math.random() * 0.015,
+          color,
+          size: 1.8 + Math.random() * 2.2
+        });
+      }
+      playThaiChime();
+    }
+
+    function animateFireworks() {
+      if (fwCanvas && fwCtx) {
+        fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.04;
+          p.vx *= 0.985;
+          p.vy *= 0.985;
+          p.alpha -= p.decay;
+
+          if (p.alpha <= 0) {
+            particles.splice(i, 1);
+          } else {
+            fwCtx.save();
+            fwCtx.globalAlpha = p.alpha;
+            fwCtx.fillStyle = p.color;
+            fwCtx.beginPath();
+            fwCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            fwCtx.fill();
+            fwCtx.restore();
+          }
+        }
+      }
+      requestAnimationFrame(animateFireworks);
+    }
+
+    // ---------- 7. ระบบเสียงดนตรีไทย (Tone.js Pentatonic) ----------
+    async function toggleSound() {
+      try {
+        if (!soundEnabled) {
+          await Tone.start();
+          if (!synth) {
+            synth = new Tone.PolySynth(Tone.Synth, {
+              oscillator: { type: 'triangle' },
+              envelope: { attack: 0.02, decay: 0.4, sustain: 0.1, release: 1.2 }
+            }).toDestination();
+            synth.volume.value = -14;
+
+            const scale = ['C4', 'D4', 'E4', 'G4', 'A4', 'C5', 'D5', 'E5'];
+            musicLoop = new Tone.Loop((time) => {
+              const note = scale[Math.floor(Math.random() * scale.length)];
+              synth.triggerAttackRelease(note, '4n', time);
+            }, '2n');
+          }
+          musicLoop.start(0);
+          Tone.Transport.bpm.value = 78;
+          Tone.Transport.start();
+          soundEnabled = true;
+          document.getElementById('soundOffIcon')?.classList.add('hidden');
+          document.getElementById('soundOnIcon')?.classList.remove('hidden');
+          showToast('เปิดเสียงดนตรีไทยบรรเลงแล้ว');
+        } else {
+          Tone.Transport.stop();
+          soundEnabled = false;
+          document.getElementById('soundOnIcon')?.classList.add('hidden');
+          document.getElementById('soundOffIcon')?.classList.remove('hidden');
+          showToast('ปิดเสียงดนตรีประกอบแล้ว');
+        }
+      } catch (e) {
+        showToast('ไม่สามารถเปิดเสียงบนอุปกรณ์นี้ได้');
+      }
+    }
+
+    function playThaiChime() {
+      if (!soundEnabled || !synth) return;
+      try {
+        const notes = ['C5', 'E5', 'G5', 'A5'];
+        synth.triggerAttackRelease(notes[Math.floor(Math.random() * notes.length)], '8n');
+      } catch (e) {}
+    }
+
+    // ---------- 8. ระบบ Modal และการประดิษฐ์กระทง ----------
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('hidden');
+      el.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.add('hidden');
+      el.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+
+    function openBuilderModal() {
+      updateBuilderPreview();
+      openModal('builderModal');
+    }
+
+    function usePoemAsWish(poemText) {
+      const input = document.getElementById('userWishInput');
+      if (input) input.value = poemText;
+      openBuilderModal();
+      showToast('นำบทกวีใส่ในคำอธิษฐานให้เรียบร้อยแล้ว');
+    }
+
+    function selectStyle(style) {
+      builderState.style = style;
+      document.querySelectorAll('.style-btn').forEach(btn => {
+        const active = btn.dataset.style === style;
+        btn.className = active
+          ? 'style-btn px-2.5 py-2 rounded-xl border text-xs font-medium transition bg-pn-gold text-pn-navy border-pn-gold'
+          : 'style-btn px-2.5 py-2 rounded-xl border text-xs font-medium transition bg-white/5 text-sky-100 border-white/15 hover:bg-white/10';
+      });
+      updateBuilderPreview();
+    }
+
+    function selectColor(color) {
+      builderState.color = color;
+      document.querySelectorAll('.color-btn').forEach(btn => {
+        btn.classList.remove('ring-pn-gold');
+        btn.classList.add('ring-transparent');
+      });
+      const clicked = Array.from(document.querySelectorAll('.color-btn')).find(b => (b.getAttribute('onclick') || '').includes(color));
+      if (clicked) {
+        clicked.classList.remove('ring-transparent');
+        clicked.classList.add('ring-pn-gold');
+      }
+      updateBuilderPreview();
+    }
+
+    function selectGroup(group) {
+      builderState.group = group;
+      document.querySelectorAll('.group-btn').forEach(btn => {
+        const active = btn.dataset.group === group;
+        btn.className = active
+          ? 'group-btn px-3 py-2 rounded-xl border text-xs font-medium transition bg-pn-gold text-pn-navy border-pn-gold'
+          : 'group-btn px-3 py-2 rounded-xl border text-xs font-medium transition bg-white/5 text-sky-100 border-white/15 hover:bg-white/10';
+      });
+    }
+
+    function fillQuickWish(text) {
+      const input = document.getElementById('userWishInput');
+      if (input) input.value = text;
+    }
+
+    function updateBuilderPreview() {
+      const prev = document.getElementById('builderPreview');
+      const label = document.getElementById('builderStyleLabel');
+      if (prev) prev.innerHTML = getKrathongSVG(builderState.style, builderState.color);
+      if (label) label.textContent = STYLE_LABELS[builderState.style];
+    }
+
+    async function launchUserKrathong() {
+      const nameEl = document.getElementById('userNameInput');
+      const classEl = document.getElementById('userClassInput');
+      const wishEl = document.getElementById('userWishInput');
+
+      const nameVal = nameEl ? nameEl.value.trim() : '';
+      const classVal = classEl ? classEl.value.trim() : '';
+      const wishVal = wishEl ? wishEl.value.trim() : '';
+
+      if (!nameVal) {
+        showToast('กรุณากรอกชื่อผู้ลอยกระทงก่อนนะครับ');
+        nameEl?.focus();
+        return;
+      }
+      if (!wishVal) {
+        showToast('กรุณาเขียนคำอธิษฐานก่อนปล่อยกระทงนะครับ');
+        wishEl?.focus();
+        return;
+      }
+
+      const wishPayload = {
+        name: nameVal,
+        classRoom: classVal || builderState.group,
+        group: builderState.group,
+        style: builderState.style,
+        color: builderState.color,
+        wish: wishVal,
+        blesses: 1,
+        createdAt: Date.now()
+      };
+
+      closeModal('builderModal');
+      if (wishEl) wishEl.value = '';
+
+      if (isCloudConnected && db && currentUser) {
+        try {
+          await addDoc(getWishesCollectionRef(), {
+            ...wishPayload,
+            authorUid: currentUser.uid
+          });
+          setRiverFilter('ทั้งหมด');
+          showToast('บันทึกและปล่อยกระทงลงสู่สายน้ำเรียบร้อยแล้ว!');
+        } catch (err) {
+          console.error('Error saving wish to Firestore:', err);
+          showToast('ไม่สามารถบันทึกขึ้นระบบได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง');
+          return;
+        }
+      } else {
+        const localWish = { ...wishPayload, id: 'local-' + Date.now(), fromCloud: false };
+        allWishes.unshift(localWish);
+        updateCounter();
+        setRiverFilter('ทั้งหมด');
+        createFloatingNode(localWish, 18, true);
+        showToast('ปล่อยกระทงลงสู่สายน้ำแล้ว (โหมดแสดงผลชั่วคราว)');
+      }
+
+      if (fwCanvas && fwCanvas.width > 0) {
+        spawnFirework(fwCanvas.width * 0.3, fwCanvas.height * 0.35);
+        setTimeout(() => spawnFirework(fwCanvas.width * 0.7, fwCanvas.height * 0.3), 260);
+        setTimeout(() => spawnFirework(fwCanvas.width * 0.5, fwCanvas.height * 0.25), 520);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ---------- 9. อ่านคำอธิษฐานและทำเนียบคำอธิษฐาน ----------
+    function openWishDetail(id) {
+      const item = allWishes.find(w => w.id === id);
+      if (!item) return;
+      currentDetailId = id;
+
+      document.getElementById('detailSvg').innerHTML = getKrathongSVG(item.style, item.color);
+      document.getElementById('detailBadge').textContent = `${item.group}${item.classRoom && item.classRoom !== item.group ? ' • ' + item.classRoom : ''}`;
+      document.getElementById('detailName').textContent = item.name;
+      document.getElementById('detailWish').textContent = `“${item.wish}”`;
+      document.getElementById('detailBlessCount').textContent = toThaiDigits(item.blesses);
+      openModal('wishDetailModal');
+    }
+
+    async function blessCurrentWish() {
+      const item = allWishes.find(w => w.id === currentDetailId);
+      if (!item) return;
+
+      if (item.fromCloud && isCloudConnected && db && currentUser) {
+        try {
+          const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'krathong_wishes', item.id);
+          await updateDoc(docRef, { blesses: increment(1) });
+          playThaiChime();
+          showToast('ส่งคำอนุโมทนาสาธุเรียบร้อยแล้ว 🙏');
+        } catch (err) {
+          console.error('Error updating blesses:', err);
+          showToast('ไม่สามารถส่งคำอนุโมทนาได้ในขณะนี้');
+        }
+      } else {
+        item.blesses += 1;
+        const blessEl = document.getElementById('detailBlessCount');
+        if (blessEl) blessEl.textContent = toThaiDigits(item.blesses);
+        playThaiChime();
+        showToast('ส่งคำอนุโมทนาสาธุเรียบร้อยแล้ว 🙏');
+      }
+    }
+
+    function openAllWishesModal() {
+      renderWishesGrid();
+      openModal('allWishesModal');
+    }
+
+    function filterModalWishes(group) {
+      modalFilter = group;
+      document.querySelectorAll('.modal-chip').forEach(btn => {
+        btn.className = btn.textContent.trim() === group
+          ? 'modal-chip shrink-0 px-3 py-1.5 rounded-full bg-pn-gold text-pn-navy font-semibold'
+          : 'modal-chip shrink-0 px-3 py-1.5 rounded-full bg-white/10 text-sky-100 hover:bg-white/20';
+      });
+      renderWishesGrid();
+    }
+
+    function renderWishesGrid() {
+      const grid = document.getElementById('wishesGrid');
+      if (!grid) return;
+      const list = modalFilter === 'ทั้งหมด' ? allWishes : allWishes.filter(w => w.group === modalFilter);
+
+      if (list.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-10 text-sky-200/70 text-sm">ยังไม่มีคำอธิษฐานในหมวดนี้</div>`;
+        return;
+      }
+
+      grid.innerHTML = list.map(item => `
+        <div onclick="closeModal('allWishesModal'); openWishDetail('${item.id}')" class="cursor-pointer bg-pn-navy/75 hover:bg-pn-navy border border-white/10 hover:border-pn-gold/45 rounded-2xl p-4 transition flex flex-col justify-between gap-3">
+          <div class="flex items-start gap-3">
+            <div class="w-12 h-12 shrink-0">${getKrathongSVG(item.style, item.color)}</div>
+            <div class="min-w-0">
+              <div class="font-serif font-bold text-pn-goldBright text-sm truncate">${escapeHtml(item.name)}</div>
+              <div class="text-[11px] text-sky-300/85 truncate">${escapeHtml(item.group)}${item.classRoom && item.classRoom !== item.group ? ' • ' + escapeHtml(item.classRoom) : ''}</div>
+            </div>
+          </div>
+          <p class="font-serif text-xs sm:text-sm text-pn-cream/90 leading-relaxed line-clamp-3">“${escapeHtml(item.wish)}”</p>
+          <div class="flex items-center justify-between text-[11px] text-sky-200/70 pt-2 border-t border-white/10">
+            <span>${STYLE_LABELS[item.style] || 'กระทงออนไลน์'}</span>
+            <span class="text-pn-goldBright">🙏 ${toThaiDigits(item.blesses)}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ---------- 10. ระบบแชร์ (รองรับ Web Share API บนมือถือ/LINE/Safari) ----------
+    async function handleShareAction() {
+      const shareData = {
+        title: 'คืนเพ็ญ ๑๐๐ ปี ผดุงนารี | ลอยกระทงออนไลน์',
+        text: 'ชวนชาวผดุงนารีร่วมลอยกระทงออนไลน์และสืบสานวรรณศิลป์ กับกลุ่มสาระการเรียนรู้ภาษาไทย โรงเรียนผดุงนารี จ.มหาสารคาม',
+        url: window.location.href
+      };
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+          return;
+        } catch (e) {
+          if (e && e.name === 'AbortError') return;
+        }
+      }
+      openShareModal();
+    }
+
+    function openShareModal() {
+      const input = document.getElementById('shareUrlInput');
+      if (input) input.value = window.location.href;
+      openModal('shareModal');
+    }
+
+    function copyShareLink() {
+      const input = document.getElementById('shareUrlInput');
+      if (!input) return;
+      input.select();
+      input.setSelectionRange(0, 99999);
+      try {
+        document.execCommand('copy');
+        showToast('คัดลอกลิงก์กิจกรรมเรียบร้อยแล้ว!');
+      } catch (e) {
+        showToast('กรุณากดคัดลอกลิงก์จากช่องข้อความ');
+      }
+    }
+
+    // ---------- 11. ระบบมินิควิซประลองภูมิภาษาไทย ----------
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+      const badge = document.getElementById('quizProgressBadge');
+      if (!container || !badge) return;
+
+      if (quizIndex >= QUIZ_DATA.length) {
+        badge.textContent = 'สรุปผลคะแนน';
+        const rank = quizScore === 3 ? 'ปราชญ์ภาษาไทย ผดุงนารี' : quizScore === 2 ? 'ยุวกวีศรีมหาสารคาม' : 'ผู้รักภาษาไทย';
+        container.innerHTML = `
+          <div class="text-center py-4">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-pn-gold/20 border-2 border-pn-gold text-3xl mb-3">🏆</div>
+            <h4 class="font-serif text-2xl font-bold text-pn-goldBright">ได้คะแนน ${toThaiDigits(quizScore)} / ${toThaiDigits(QUIZ_DATA.length)}</h4>
+            <div class="mt-2 inline-block px-4 py-1 rounded-full bg-sky-400/20 border border-sky-300/40 text-sky-200 text-sm font-medium">
+              เกียรติยศ: ${rank}
+            </div>
+            <p class="text-sm text-sky-100/80 mt-3">ขอบคุณที่ร่วมสนุกกับกิจกรรมประลองภูมิภาษาไทย โรงเรียนผดุงนารี</p>
+            <button type="button" onclick="resetQuiz()" class="mt-5 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition">
+              เล่นใหม่อีกครั้ง
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      const item = QUIZ_DATA[quizIndex];
+      badge.textContent = `ข้อที่ ${toThaiDigits(quizIndex + 1)} / ${toThaiDigits(QUIZ_DATA.length)}`;
+      quizAnswered = false;
+
+      container.innerHTML = `
+        <h4 class="font-serif text-base sm:text-lg font-bold text-white leading-relaxed mb-4">
+          ${toThaiDigits(quizIndex + 1)}. ${escapeHtml(item.q)}
+        </h4>
+        <div class="space-y-2.5" id="quizOptions">
+          ${item.options.map((opt, idx) => `
+            <button type="button" onclick="answerQuiz(${idx})" class="quiz-opt w-full text-left px-4 py-3 rounded-xl bg-pn-navy/80 hover:bg-white/10 border border-white/15 text-sm text-sky-100 transition flex items-center gap-3">
+              <span class="w-6 h-6 rounded-full bg-white/10 text-pn-goldBright text-xs font-bold flex items-center justify-center shrink-0">${['ก', 'ข', 'ค', 'ง'][idx]}</span>
+              <span>${escapeHtml(opt)}</span>
+            </button>
+          `).join('')}
+        </div>
+        <div id="quizFeedback" class="hidden mt-4 p-4 rounded-2xl text-sm leading-relaxed"></div>
+        <div id="quizNextWrap" class="hidden mt-4 text-right">
+          <button type="button" onclick="nextQuiz()" class="btn-pn-gold px-5 py-2.5 rounded-xl font-bold text-sm transition">
+            ${quizIndex < QUIZ_DATA.length - 1 ? 'ข้อถัดไป →' : 'ดูผลคะแนน →'}
+          </button>
+        </div>
+      `;
+    }
+
+    function answerQuiz(selectedIdx) {
+      if (quizAnswered) return;
+      quizAnswered = true;
+      const item = QUIZ_DATA[quizIndex];
+      const buttons = document.querySelectorAll('.quiz-opt');
+
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === item.answer) {
+          btn.classList.add('bg-emerald-500/25', 'border-emerald-400', 'text-emerald-200');
+        } else if (idx === selectedIdx) {
+          btn.classList.add('bg-rose-500/25', 'border-rose-400', 'text-rose-200');
+        } else {
+          btn.classList.add('opacity-50');
+        }
+      });
+
+      const fb = document.getElementById('quizFeedback');
+      if (fb) {
+        fb.classList.remove('hidden');
+        if (selectedIdx === item.answer) {
+          quizScore += 1;
+          fb.className = 'mt-4 p-4 rounded-2xl text-sm leading-relaxed bg-emerald-500/15 border border-emerald-400/35 text-emerald-200';
+          fb.innerHTML = `<b>เก่งมากครับ! ตอบถูกต้อง</b><br/>${escapeHtml(item.explain)}`;
+          playThaiChime();
+        } else {
+          fb.className = 'mt-4 p-4 rounded-2xl text-sm leading-relaxed bg-amber-500/15 border border-amber-400/35 text-amber-100';
+          fb.innerHTML = `<b>ยังไม่ถูกนะครับ เฉลยคือข้อ ${['ก', 'ข', 'ค', 'ง'][item.answer]}</b><br/>${escapeHtml(item.explain)}`;
+        }
+      }
+      document.getElementById('quizNextWrap')?.classList.remove('hidden');
+    }
+
+    function nextQuiz() {
+      quizIndex += 1;
+      renderQuiz();
+    }
+
+    function resetQuiz() {
+      quizIndex = 0;
+      quizScore = 0;
+      renderQuiz();
+    }
+
+    // ---------- 12. เปิดฟังก์ชันให้เรียกใช้จาก HTML onclick ได้ ----------
+    window.openAllWishesModal = openAllWishesModal;
+    window.toggleSound = toggleSound;
+    window.handleShareAction = handleShareAction;
+    window.openBuilderModal = openBuilderModal;
+    window.setRiverFilter = setRiverFilter;
+    window.usePoemAsWish = usePoemAsWish;
+    window.closeModal = closeModal;
+    window.selectStyle = selectStyle;
+    window.selectColor = selectColor;
+    window.selectGroup = selectGroup;
+    window.fillQuickWish = fillQuickWish;
+    window.launchUserKrathong = launchUserKrathong;
+    window.blessCurrentWish = blessCurrentWish;
+    window.filterModalWishes = filterModalWishes;
+    window.copyShareLink = copyShareLink;
+    window.openWishDetail = openWishDetail;
+    window.answerQuiz = answerQuiz;
+    window.nextQuiz = nextQuiz;
+    window.resetQuiz = resetQuiz;
+
+    // ---------- 13. เริ่มต้นทำงานเมื่อโหลดหน้าเว็บ ----------
+    function bindGlobalEvents() {
+      const skyStage = document.getElementById('skyStage');
+      if (skyStage) {
+        skyStage.addEventListener('click', (e) => {
+          if (e.target.closest('button, a') || !fwCanvas) return;
+          const rect = fwCanvas.getBoundingClientRect();
+          spawnFirework(e.clientX - rect.left, e.clientY - rect.top);
+        });
+      }
+
+      ['builderModal', 'wishDetailModal', 'allWishesModal', 'shareModal'].forEach(id => {
+        const modal = document.getElementById(id);
+        if (modal) {
+          modal.addEventListener('click', (e) => {
+            if (e.target.id === id) closeModal(id);
+          });
+        }
+      });
+
+      window.addEventListener('resize', () => {
+        resizeFireworks();
+      });
+    }
+
+    function initApp() {
+      initFireworksCanvas();
+      bindGlobalEvents();
+      updateCounter();
+      createRiverEffects();
+      renderRiverKrathongs();
+      renderQuiz();
+      resizeFireworks();
+      animateRiver();
+      animateFireworks();
+      initFirestoreConnection();
+
+      // จุดพลุเปิดฉากเบาๆ ต้อนรับ
+      setTimeout(() => {
+        if (fwCanvas && fwCanvas.width > 0) {
+          spawnFirework(fwCanvas.width * 0.72, fwCanvas.height * 0.28);
+        }
+      }, 900);
+    }
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      initApp();
+    } else {
+      window.addEventListener('DOMContentLoaded', initApp);
+    }
+  </script>
+</body>
+</html>
